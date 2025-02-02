@@ -6,7 +6,7 @@ function App() {
   return (
     <div className="app-container">
       <div className="container">
-        <ClientQuestionnaireLinear />
+        <ClientQuestionnaire />
       </div>
     </div>
   );

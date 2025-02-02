@@ -5,12 +5,15 @@
   padding: 1rem;
 
   .form-header {
-    margin-bottom: 2rem;
+    padding-top: 2rem;
+    padding-left: 1rem;
+    padding-right: 1rem;
 
     .progress-sections {
       display: flex;
       justify-content: space-between;
       margin-bottom: 1rem;
+      min-width: min-content;
 
       .progress-section {
         display: flex;
@@ -19,6 +22,8 @@
         cursor: pointer;
         opacity: 0.7;
         transition: all 0.2s ease;
+        padding: 0 0.5rem;
+        white-space: nowrap;
 
         &:hover {
           opacity: 1;

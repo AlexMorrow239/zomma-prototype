@@ -63,7 +63,10 @@ const ClientQuestionnaire = () => {
     { id: "budget", title: "Budget" },
   ];
 
-  const handleNext = (currentSection: string) => {
+  const handleNext = (currentSection: string, e: React.MouseEvent) => {
+    e.preventDefault(); // Prevent any form submission
+    e.stopPropagation(); // Stop event bubbling
+
     const currentIndex = sections.findIndex(
       (section) => section.id === currentSection
     );
@@ -82,9 +85,13 @@ const ClientQuestionnaire = () => {
   };
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    console.log("Form submitted:", formData);
-    setSubmitSuccess(true);
+    e.preventDefault(); // This prevents the default form submission
+
+    // Only proceed with submission if we're on the last section AND the submit button was clicked
+    if (activeSection === sections[sections.length - 1].id) {
+      console.log("Form submitted:", formData);
+      setSubmitSuccess(true);
+    }
   };
 
   const toggleService = (serviceId: string) => {
@@ -328,7 +335,11 @@ const ClientQuestionnaire = () => {
             )}
 
             {activeSection !== sections[sections.length - 1].id ? (
-              <button type="button" onClick={() => handleNext(activeSection)}>
+              <button
+                type="button"
+                className="primary"
+                onClick={(e) => handleNext(activeSection, e)}
+              >
                 Next
               </button>
             ) : (
