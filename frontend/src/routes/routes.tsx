@@ -5,7 +5,7 @@ import { MainLayout } from "@/components/layout/main-layout/MainLayout";
 import NotFound from "@/pages/not-found/NotFound";
 
 import { AuthRouter } from "./AuthRouter";
-import ProspectQuestionairre from "@/pages/prospect-questionairre/ProspectQuestionairre";
+import Prospectquestionnaire from "@/pages/prospect-questionnaire/Prospectquestionnaire";
 
 export const router = createBrowserRouter([
   {
@@ -15,7 +15,7 @@ export const router = createBrowserRouter([
     children: [
       {
         index: true,
-        element: <ProspectQuestionairre />,
+        element: <Prospectquestionnaire />,
       },
       {
         path: "auth/*",

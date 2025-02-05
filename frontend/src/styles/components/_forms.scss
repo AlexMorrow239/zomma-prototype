@@ -1,7 +1,5 @@
 @use "../abstracts" as *;
 
-/* Form Group
------------------------------ */
 .form-group {
   margin-bottom: var(--spacing-4);
   position: relative;
@@ -19,8 +17,6 @@
   }
 }
 
-/* Form Label
------------------------------ */
 .form-label {
   display: inline-block;
   margin-bottom: var(--spacing-2);
@@ -32,10 +28,14 @@
   &--hidden {
     @include visually-hidden;
   }
+
+  &--required::after {
+    content: "*";
+    color: var(--color-error);
+    margin-left: var(--spacing-1);
+  }
 }
 
-/* Base Input Styles
------------------------------ */
 .form-input {
   @include input-base;
   width: 100%;
@@ -118,8 +118,6 @@ textarea.form-input {
   }
 }
 
-/* Checkbox and Radio
------------------------------ */
 .form-checkbox,
 .form-radio {
   --indicator-size: 1.25rem;
@@ -215,8 +213,6 @@ textarea.form-input {
   }
 }
 
-/* Switch Toggle
------------------------------ */
 .form-switch {
   --switch-width: 2.75rem;
   --switch-height: 1.5rem;

@@ -2,7 +2,7 @@
   display: flex;
   flex-direction: column;
   gap: var(--spacing-2);
-  margin-bottom: var(--spacing-4);
+  margin-bottom: var(--spacing-4); // Add spacing between fields
 
   &__label {
     font-weight: var(--font-weight-medium);
@@ -16,17 +16,22 @@
   }
 
   &__input {
-    min-height: 42px;
-    padding: var(--spacing-3);
+    min-height: 42px; // Increase base height
+    padding: var(--spacing-3) var(--spacing-4); // Increase horizontal padding
     border: 1px solid var(--color-border);
     border-radius: var(--radius-md);
     font-size: var(--font-size-base);
+    transition: all 0.2s ease;
     width: 100%;
     background-color: var(--color-background);
     color: var(--color-text);
 
     &::placeholder {
       color: var(--color-text-light);
+    }
+
+    &:hover:not(:disabled) {
+      border-color: var(--color-primary);
     }
 
     &:focus {
@@ -37,9 +42,16 @@
 
     &--error {
       border-color: var(--color-error);
-      
+      background-color: var(--color-error-50);
       &:focus {
         box-shadow: 0 0 0 2px var(--color-error-light);
+      }
+    }
+
+    &--success {
+      border-color: var(--color-success);
+      &:focus {
+        box-shadow: 0 0 0 2px var(--color-success-light);
       }
     }
 
@@ -50,6 +62,7 @@
     }
   }
 
+  // Style select elements
   select.form-field__input {
     appearance: none;
     padding-right: var(--spacing-12);
@@ -59,18 +72,33 @@
     background-size: 16px;
   }
 
+  // Style textarea elements
   textarea.form-field__input {
     min-height: 100px;
+    padding: var(--spacing-4);
+    line-height: var(--line-height-normal);
     resize: vertical;
   }
 
   &__help {
     font-size: var(--font-size-xs);
     color: var(--color-text-secondary);
+    margin-top: var(--spacing-1);
   }
 
   &__error {
     font-size: var(--font-size-xs);
     color: var(--color-error);
+    margin-top: var(--spacing-1);
+  }
+}
+
+// Responsive adjustments
+@media (max-width: 640px) {
+  .form-field {
+    &__input {
+      min-height: 38px;
+      padding: var(--spacing-2) var(--spacing-3);
+    }
   }
 }
