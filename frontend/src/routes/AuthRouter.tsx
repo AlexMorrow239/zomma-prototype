@@ -1,17 +1,17 @@
 import { Navigate, Route, Routes } from "react-router-dom";
 
 import Login from "@/pages/auth/login/Login";
-import Register from "@/pages/auth/register/Register";
 import Dashboard from "@/pages/dashboard/Dashboard";
 
 import { ProtectedRoute } from "./ProtectedRoute";
+import Registration from "@/pages/auth/registration/Registration";
 
 export const AuthRouter = (): React.ReactElement => {
   return (
     <Routes>
       {/* Public Routes */}
       <Route path="login" element={<Login />} />
-      <Route path="register" element={<Register />} />
+      <Route path="register" element={<Registration />} />
 
       {/* Protected Routes */}
       <Route element={<ProtectedRoute />}>
