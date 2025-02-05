@@ -1,18 +1,21 @@
 import { useState } from "react";
-import { useForm, type UseFormReturn } from "react-hook-form";
+
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useForm, type UseFormReturn } from "react-hook-form";
 
 import type { ProspectFormData } from "./schema";
 import { prospectSchema } from "./schema";
 
-type NestedPaths = 
+type NestedPaths =
   | keyof ProspectFormData
   | `contact.${keyof ProspectFormData["contact"]}`
   | `goals.${keyof ProspectFormData["goals"]}`
   | `services.${keyof ProspectFormData["services"]}`
   | `budget.${keyof ProspectFormData["budget"]}`;
 
-export const useProspectForm = (onSubmit: (data: ProspectFormData) => Promise<void>): {
+export const useProspectForm = (
+  onSubmit: (data: ProspectFormData) => Promise<void>
+): {
   form: UseFormReturn<ProspectFormData>;
   currentStep: number;
   isSubmitting: boolean;
@@ -29,7 +32,8 @@ export const useProspectForm = (onSubmit: (data: ProspectFormData) => Promise<vo
     defaultValues: {
       contact: {
         firstName: "",
-        lastName: "",        businessName: "",
+        lastName: "",
+        businessName: "",
         preferredContact: "email",
         email: "",
         phone: "",
@@ -61,15 +65,10 @@ export const useProspectForm = (onSubmit: (data: ProspectFormData) => Promise<vo
         ];
         break;
       case 2:
-        fieldsToValidate = [
-          "goals.financialGoals",
-          "goals.challenges",
-        ];
+        fieldsToValidate = ["goals.financialGoals", "goals.challenges"];
         break;
       case 3:
-        fieldsToValidate = [
-          "services.selectedServices",
-        ];
+        fieldsToValidate = ["services.selectedServices"];
         break;
     }
 

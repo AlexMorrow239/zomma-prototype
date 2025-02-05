@@ -1,6 +1,9 @@
 import { ReactElement, useState } from "react";
+
 import { Link, NavLink } from "react-router-dom";
+
 import { navigationItems } from "@/config/navigation";
+
 import "./NavBar.scss";
 
 export const NavBar = (): ReactElement => {
@@ -23,7 +26,9 @@ export const NavBar = (): ReactElement => {
           </Link>
         </div>
 
-        <div className={`nav__menu ${isMobileMenuOpen ? "nav__menu--open" : ""}`}>
+        <div
+          className={`nav__menu ${isMobileMenuOpen ? "nav__menu--open" : ""}`}
+        >
           {navigationItems.map((item) => (
             <NavLink
               key={item.path}

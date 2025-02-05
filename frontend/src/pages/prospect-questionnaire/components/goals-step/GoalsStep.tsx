@@ -1,5 +1,7 @@
-import { FormField } from "@/components/common/form-field/FormField";
 import { UseFormReturn } from "react-hook-form";
+
+import { FormField } from "@/components/common/form-field/FormField";
+
 import { ProspectFormData } from "../../schema";
 
 interface GoalsStepProps {
@@ -14,7 +16,7 @@ export default function GoalsStep({ form, errors }: GoalsStepProps) {
       <p className="section-description">
         Help us understand your financial objectives and challenges.
       </p>
-      
+
       <FormField
         formType="prospect"
         form={form}

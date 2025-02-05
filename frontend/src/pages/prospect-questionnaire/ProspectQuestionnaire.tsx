@@ -1,11 +1,12 @@
 import { useState } from "react";
-import "./Prospectquestionnaire.scss";
-import { ProspectFormData } from "./schema";
-import { useProspectForm } from "./useProspectForm";
+
+import BudgetStep from "./components/budget-step/BudgetStep";
 import ContactStep from "./components/contact-step/ContactStep";
 import GoalsStep from "./components/goals-step/GoalsStep";
 import ServicesStep from "./components/service-step/ServiceStep";
-import BudgetStep from "./components/budget-step/BudgetStep";
+import "./ProspectQuestionnaire.scss";
+import { ProspectFormData } from "./schema";
+import { useProspectForm } from "./useProspectForm";
 
 const services = [
   {
@@ -72,7 +73,6 @@ export default function ProspectQuestionnaire() {
       case 3:
         return (
           <ServicesStep
-            form={form}
             errors={errors}
             watch={watch}
             setValue={setValue}
@@ -105,17 +105,19 @@ export default function ProspectQuestionnaire() {
       <form onSubmit={form.handleSubmit(handleSubmit)} noValidate>
         <div className="form-header">
           <div className="progress-sections">
-            {["Contact", "Goals", "Services", "Budget"].map((section, index) => (
-              <div
-                key={section}
-                className={`progress-section ${
-                  currentStep === index + 1 ? "active" : ""
-                }`}
-              >
-                <span className="section-number">{index + 1}</span>
-                <span className="section-title">{section}</span>
-              </div>
-            ))}
+            {["Contact", "Goals", "Services", "Budget"].map(
+              (section, index) => (
+                <div
+                  key={section}
+                  className={`progress-section ${
+                    currentStep === index + 1 ? "active" : ""
+                  }`}
+                >
+                  <span className="section-number">{index + 1}</span>
+                  <span className="section-title">{section}</span>
+                </div>
+              )
+            )}
           </div>
         </div>
 

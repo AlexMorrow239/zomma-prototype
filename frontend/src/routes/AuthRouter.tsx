@@ -1,10 +1,10 @@
 import { Navigate, Route, Routes } from "react-router-dom";
 
 import Login from "@/pages/auth/login/Login";
+import Registration from "@/pages/auth/registration/Registration";
 import Dashboard from "@/pages/dashboard/Dashboard";
 
 import { ProtectedRoute } from "./ProtectedRoute";
-import Registration from "@/pages/auth/registration/Registration";
 
 export const AuthRouter = (): React.ReactElement => {
   return (

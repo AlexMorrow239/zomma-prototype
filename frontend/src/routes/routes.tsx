@@ -1,11 +1,12 @@
 import { createBrowserRouter, Navigate } from "react-router-dom";
 
-import { ErrorDisplay } from "@/pages/error-boundary/ErrorBoundary";
 import { MainLayout } from "@/components/layout/main-layout/MainLayout";
+
+import { ErrorDisplay } from "@/pages/error-boundary/ErrorBoundary";
 import NotFound from "@/pages/not-found/NotFound";
+import Prospectquestionnaire from "@/pages/prospect-questionnaire/Prospectquestionnaire";
 
 import { AuthRouter } from "./AuthRouter";
-import Prospectquestionnaire from "@/pages/prospect-questionnaire/Prospectquestionnaire";
 
 export const router = createBrowserRouter([
   {

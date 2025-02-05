@@ -1,3 +1,5 @@
+import { ReactElement } from "react";
+
 import type {
   FieldError,
   Path,
@@ -6,12 +8,11 @@ import type {
 } from "react-hook-form";
 
 import "./FormField.scss";
-import { ReactElement } from "react";
 
 interface ProspectFormData {
   contact: {
     firstName: string;
-    lastName: string
+    lastName: string;
     email: string;
     phone: string;
     preferredContact: "email" | "phone" | "text";
@@ -92,12 +93,12 @@ export function FormField<T extends Record<string, unknown>>({
   value,
   autocomplete,
   onChange,
-  error: explicitError
+  error: explicitError,
 }: FormFieldProps<T>): ReactElement {
   const errors = form?.formState?.errors;
 
   const registerField = form
-    ? (formType === "prospect")
+    ? formType === "prospect"
       ? form.register(name)
       : form.register(name, { value: defaultValue })
     : { onChange, name };
@@ -107,7 +108,7 @@ export function FormField<T extends Record<string, unknown>>({
 
     const parts = name.split(".");
     let currentErrors: any = errors;
-    
+
     for (const part of parts) {
       if (!currentErrors?.[part]) return undefined;
       currentErrors = currentErrors[part];

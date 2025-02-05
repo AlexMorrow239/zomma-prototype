@@ -1,9 +1,6 @@
 import { CheckSquare } from "lucide-react";
-import { UseFormReturn } from "react-hook-form";
-import { ProspectFormData } from "../../schema";
 
 interface ServicesStepProps {
-  form: UseFormReturn<ProspectFormData>;
   errors: any;
   watch: any;
   setValue: any;
@@ -14,11 +11,11 @@ interface ServicesStepProps {
   }>;
 }
 
-export default function ServicesStep({ 
-  errors, 
+export default function ServicesStep({
+  errors,
   watch,
   setValue,
-  services 
+  services,
 }: ServicesStepProps) {
   const handleServiceSelection = (serviceId: string) => {
     const currentServices = watch("services.selectedServices") || [];
@@ -36,7 +33,9 @@ export default function ServicesStep({
       <p className="section-description">
         Select the services you're interested in discussing with our team.
       </p>
-      <div className={`services-grid ${errors.services?.selectedServices ? 'has-error' : ''}`}>
+      <div
+        className={`services-grid ${errors.services?.selectedServices ? "has-error" : ""}`}
+      >
         {services.map((service) => (
           <div
             key={service.id}
@@ -72,7 +71,7 @@ export default function ServicesStep({
       )}
       <div className="service-note">
         <p>
-          Note: You can select multiple services. Our team will tailor their 
+          Note: You can select multiple services. Our team will tailor their
           response based on your selections.
         </p>
       </div>

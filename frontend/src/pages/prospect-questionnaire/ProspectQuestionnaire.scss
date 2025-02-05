@@ -35,7 +35,7 @@
           .section-number {
             background-color: var(--color-info);
             color: var(--color-background);
-            background-color: var(--color-primary)
+            background-color: var(--color-primary);
           }
         }
 
@@ -52,7 +52,7 @@
         .section-title {
           font-size: var(--font-size-sm);
 
-          @include respond-to('md') {
+          @include respond-to("md") {
             font-size: var(--font-size-base);
           }
         }
@@ -107,7 +107,7 @@
         .grid-container {
           @include grid(1, "4");
 
-          @include respond-to('md') {
+          @include respond-to("md") {
             grid-template-columns: 1fr 1fr;
           }
         }
@@ -137,7 +137,7 @@
         .services-grid {
           @include grid(1, "4");
 
-          @include respond-to('md') {
+          @include respond-to("md") {
             grid-template-columns: 1fr 1fr;
           }
 
@@ -156,6 +156,11 @@
             &.selected {
               background-color: var(--color-info-light);
               border-color: var(--color-info);
+            }
+
+            &.has-error {
+              border: 1px solid var(--color-error);
+              border-radius: var(--radius-lg);
             }
 
             .service-content {
@@ -214,7 +219,7 @@
           padding: var(--spacing-3) var(--spacing-6);
 
           &.secondary {
-            @include button-variant('--color-background', '--color-text');
+            @include button-variant("--color-background", "--color-text");
             border: 1px solid var(--color-border);
 
             &:hover {
@@ -224,7 +229,7 @@
           }
 
           &:not(.secondary) {
-            @include button-variant('--color-info', '--color-background');
+            @include button-variant("--color-info", "--color-background");
           }
         }
       }

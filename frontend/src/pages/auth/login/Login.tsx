@@ -1,5 +1,7 @@
 import { ReactElement, useState } from "react";
+
 import { Link, useNavigate } from "react-router-dom";
+
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
@@ -11,9 +13,7 @@ import "./Login.scss";
 
 // Define the form validation schema
 const loginSchema = z.object({
-  email: z
-    .string()
-    .email("Invalid email address"),
+  email: z.string().email("Invalid email address"),
   password: z.string().min(1, "Password is required"),
 });
 
@@ -34,9 +34,9 @@ export default function Login(): ReactElement {
     setIsLoading(true);
     try {
       // Temporary mock login
-      console.log('Login attempted with:', data);
+      console.log("Login attempted with:", data);
       // Simulate API delay
-      await new Promise(resolve => setTimeout(resolve, 1000));
+      await new Promise((resolve) => setTimeout(resolve, 1000));
       navigate("/dashboard");
     } catch (err) {
       console.error("Login error:", err);
@@ -49,9 +49,7 @@ export default function Login(): ReactElement {
     <div className="login">
       <div className="login__container">
         <h1 className="login__title">Partener Login</h1>
-        <p className="login__subtitle">
-          Sign in to manage clients
-        </p>
+        <p className="login__subtitle">Sign in to manage clients</p>
 
         <form
           className="login__form"
