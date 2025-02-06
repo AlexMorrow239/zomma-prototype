@@ -1,5 +1,7 @@
 import { CheckSquare } from "lucide-react";
 
+import "./ServiceStep.scss";
+
 interface ServicesStepProps {
   errors: any;
   watch: any;

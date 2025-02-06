@@ -85,30 +85,6 @@
         font-size: var(--font-size-lg);
       }
     }
-
-    .btn {
-      display: inline-flex;
-      align-items: center;
-      gap: var(--spacing-2);
-      font-size: var(--font-size-lg);
-      padding: var(--spacing-4) var(--spacing-8);
-      background-color: var(--color-background);
-      color: var(--color-primary);
-      border: none;
-      border-radius: var(--radius-lg);
-      cursor: pointer;
-      transition: var(--transition-all);
-
-      &:hover {
-        transform: translateY(-2px);
-        box-shadow: var(--shadow-lg);
-      }
-
-      .icon {
-        width: 1.25em;
-        height: 1.25em;
-      }
-    }
   }
 }
 

@@ -1,5 +1,7 @@
 import { useState } from "react";
 
+import { Button } from "@/components/common/button/Button";
+
 import BudgetStep from "./components/budget-step/BudgetStep";
 import ContactStep from "./components/contact-step/ContactStep";
 import GoalsStep from "./components/goals-step/GoalsStep";
@@ -129,40 +131,37 @@ export default function ProspectQuestionnaire() {
         <div className="form-footer">
           <div className="button-group">
             {currentStep > 1 && (
-              <button
-                type="button"
-                className="secondary"
+              <Button
+                variant="outline"
+                size="md"
                 onClick={handlePreviousStep}
                 disabled={isSubmitting}
               >
                 Previous
-              </button>
+              </Button>
             )}
 
             {currentStep < 4 && (
-              <button
-                type="button"
+              <Button
+                variant="primary"
+                size="md"
                 onClick={handleNextStep}
                 disabled={isSubmitting}
               >
                 Next
-              </button>
+              </Button>
             )}
 
             {currentStep === 4 && (
-              <button
+              <Button
                 type="submit"
+                variant="primary"
+                size="md"
+                isLoading={isSubmitting}
                 disabled={isSubmitting || !form.formState.isValid}
               >
-                {isSubmitting ? (
-                  <span className="button__content">
-                    <span className="spinner" />
-                    Submitting...
-                  </span>
-                ) : (
-                  "Submit Questionnaire"
-                )}
-              </button>
+                Submit Questionnaire
+              </Button>
             )}
           </div>
         </div>

@@ -4,6 +4,8 @@ import { useNavigate } from "react-router-dom";
 
 import { ArrowLeft } from "lucide-react";
 
+import { Button } from "@/components/common/button/Button";
+
 import "./NotFound.scss";
 
 const NotFound: React.FC = () => {
@@ -21,10 +23,14 @@ const NotFound: React.FC = () => {
             <p className="subtitle">
               The page you're looking for doesn't exist or has been moved.
             </p>
-            <button className="btn btn--primary" onClick={() => navigate(-1)}>
-              <ArrowLeft className="icon" />
+            <Button
+              variant="primary"
+              size="md"
+              onClick={() => navigate(-1)}
+              leftIcon={<ArrowLeft size={20} />}
+            >
               Go Back
-            </button>
+            </Button>
           </div>
         </div>
       </div>

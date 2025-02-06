@@ -112,29 +112,6 @@
         margin-top: var(--spacing-2);
       }
     }
-
-    .button {
-      &--primary {
-        width: 100%;
-        padding: var(--spacing-3);
-        background-color: var(--color-primary);
-        color: var(--color-white);
-        border: none;
-        border-radius: var(--radius-md);
-        font-weight: var(--font-weight-medium);
-        cursor: pointer;
-        transition: background-color 0.2s ease;
-
-        &:hover {
-          background-color: var(--color-primary-dark);
-        }
-
-        &:disabled {
-          background-color: var(--color-primary-light);
-          cursor: not-allowed;
-        }
-      }
-    }
   }
 
   &__footer {

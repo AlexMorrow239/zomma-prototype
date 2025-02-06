@@ -13,6 +13,7 @@ $color-gray-800: #1e293b;
 $color-gray-900: #0f172a;
 
 // Brand colors
+$color-primary-300: #9ed18c;
 $color-primary-400: #7ec265; // Bonsai Green
 $color-primary-500: #005030; // Miami Green
 $color-primary-600: #004528; // Darker shade for depth
@@ -27,6 +28,7 @@ $text-color-light: $color-gray-500;
 
 :root {
   // Brand Colors
+  --color-primary-light: #{$color-primary-300};
   --color-primary: #{$color-primary-400};
   --color-primary-dark: #{$color-primary-500};
   --color-primary-darker: #{$color-primary-600};
@@ -111,7 +113,7 @@ $text-color-light: $color-gray-500;
   --spacing-24: 6rem;
   --spacing-32: 8rem;
 
-  // refined Layout Values
+  // Layout Values
   --container-width: 80rem;
   --container-width-sm: 640px;
   --container-width-md: 768px;

@@ -6,6 +6,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 
+import { Button } from "@/components/common/button/Button";
 import { FormField } from "@/components/common/form-field/FormField";
 import { PasswordField } from "@/components/common/password-field/PasswordField";
 
@@ -90,13 +91,16 @@ export default function Login(): ReactElement {
             />
           </div>
 
-          <button
+          <Button
             type="submit"
-            className="button button--primary button--full-width"
+            variant="primary"
+            size="md"
+            fullWidth
+            isLoading={isLoading}
             disabled={isLoading}
           >
-            {isLoading ? "Signing In..." : "Sign In"}
-          </button>
+            Sign In
+          </Button>
 
           <div className="login__footer">
             <p>
