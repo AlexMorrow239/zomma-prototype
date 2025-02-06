@@ -1,6 +1,7 @@
 import { useUIStore } from "@/stores/uiStore";
-import { Toast } from "./toast/Toast";
 import type { ToastType } from "@/types";
+
+import { Toast } from "./toast/Toast";
 
 export const ToastContainer: React.FC = () => {
   const { toasts, removeToast } = useUIStore();

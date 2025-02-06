@@ -1,4 +1,9 @@
-import { type UseMutationOptions, type UseQueryOptions, useMutation, useQuery } from "@tanstack/react-query";
+import {
+  useMutation,
+  type UseMutationOptions,
+  useQuery,
+  type UseQueryOptions,
+} from "@tanstack/react-query";
 
 interface FetchOptions {
   method?: string;
@@ -6,7 +11,8 @@ interface FetchOptions {
   body?: unknown;
 }
 
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || "http://localhost:3000/api";
+const API_BASE_URL =
+  import.meta.env.VITE_API_BASE_URL || "http://localhost:3000/api";
 
 async function fetchApi<T>(
   endpoint: string,
@@ -48,10 +54,7 @@ export function useApiQuery<T>(
 
 export function useApiMutation<TData, TVariables>(
   endpoint: string,
-  options?: Omit<
-    UseMutationOptions<TData, Error, TVariables>,
-    "mutationFn"
-  >
+  options?: Omit<UseMutationOptions<TData, Error, TVariables>, "mutationFn">
 ) {
   return useMutation<TData, Error, TVariables>({
     mutationFn: (variables) =>

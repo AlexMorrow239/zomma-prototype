@@ -9,6 +9,8 @@ import { z } from "zod";
 import { FormField } from "@/components/common/form-field/FormField";
 import { PasswordField } from "@/components/common/password-field/PasswordField";
 
+import { useAuthStore } from "@/stores/authStore";
+
 import "./Registration.scss";
 
 const registrationSchema = z
@@ -46,8 +48,21 @@ export default function Registration(): ReactElement {
   const onSubmit = async (data: RegistrationForm): Promise<void> => {
     setIsLoading(true);
     try {
-      console.log("Registration attempted with:", data);
+      // Accept any valid input for development
+      console.log("Development mode - auto-accepting registration:", data);
+      // Simulate API delay
       await new Promise((resolve) => setTimeout(resolve, 1000));
+
+      // Set mock auth data
+      useAuthStore.getState().setAuth(
+        {
+          id: "1",
+          email: data.email,
+          name: `${data.firstName} ${data.lastName}`,
+        },
+        "mock-token"
+      );
+
       navigate("/dashboard");
     } catch (err) {
       console.error("Registration error:", err);
@@ -71,6 +86,7 @@ export default function Registration(): ReactElement {
         >
           <div className="form-section">
             <FormField
+              formType="generic"
               form={form}
               name="firstName"
               label="First Name"
@@ -79,6 +95,7 @@ export default function Registration(): ReactElement {
             />
 
             <FormField
+              formType="generic"
               form={form}
               name="lastName"
               label="Last Name"
@@ -87,6 +104,7 @@ export default function Registration(): ReactElement {
             />
 
             <FormField
+              formType="generic"
               form={form}
               name="email"
               label="Email Address"

@@ -1,6 +1,8 @@
-import { useApiMutation, useApiQuery } from "./useApi";
-import { useAuthStore } from "@/stores/authStore";
 import { useQueryClient } from "@tanstack/react-query";
+
+import { useAuthStore } from "@/stores/authStore";
+
+import { useApiMutation, useApiQuery } from "./useApi";
 
 interface LoginCredentials {
   email: string;
@@ -37,15 +39,14 @@ export function useAuth() {
     },
   });
 
-  const { data: currentUser, isLoading: isLoadingUser } = useApiQuery<LoginResponse["user"]>(
-    "/auth/me",
-    {
-      enabled: !!token,
-      retry: false,
-      queryKey: ["user"],
-      onError: () => storeLogout()
-    }
-  );
+  const { data: currentUser, isLoading: isLoadingUser } = useApiQuery<
+    LoginResponse["user"]
+  >("/auth/me", {
+    enabled: !!token,
+    retry: false,
+    queryKey: ["user"],
+    onError: () => storeLogout(),
+  });
 
   return {
     user: currentUser || user,

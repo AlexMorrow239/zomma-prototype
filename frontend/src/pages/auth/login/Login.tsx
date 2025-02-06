@@ -9,6 +9,8 @@ import { z } from "zod";
 import { FormField } from "@/components/common/form-field/FormField";
 import { PasswordField } from "@/components/common/password-field/PasswordField";
 
+import { useAuthStore } from "@/stores/authStore";
+
 import "./Login.scss";
 
 // Define the form validation schema
@@ -33,10 +35,21 @@ export default function Login(): ReactElement {
   const onSubmit = async (data: loginForm): Promise<void> => {
     setIsLoading(true);
     try {
-      // Temporary mock login
-      console.log("Login attempted with:", data);
+      // Accept any valid input for development
+      console.log("Development mode - auto-accepting valid credentials:", data);
       // Simulate API delay
       await new Promise((resolve) => setTimeout(resolve, 1000));
+
+      // Set mock auth data
+      useAuthStore.getState().setAuth(
+        {
+          id: "1",
+          email: data.email,
+          name: "Test User",
+        },
+        "mock-token"
+      );
+
       navigate("/dashboard");
     } catch (err) {
       console.error("Login error:", err);
@@ -58,6 +71,7 @@ export default function Login(): ReactElement {
         >
           <div className="form-section">
             <FormField
+              formType="generic"
               form={form}
               name="email"
               label="Email Address"
