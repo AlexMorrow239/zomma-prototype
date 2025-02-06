@@ -27,4 +27,10 @@ export const prospectSchema = z.object({
   }),
 });
 
+export type ProspectFormPaths =
+  | `contact.${keyof ProspectFormData["contact"]}`
+  | `goals.${keyof ProspectFormData["goals"]}`
+  | `services.${keyof ProspectFormData["services"]}`
+  | `budget.${keyof ProspectFormData["budget"]}`;
+
 export type ProspectFormData = z.infer<typeof prospectSchema>;

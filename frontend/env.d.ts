@@ -2,7 +2,8 @@
 
 interface ImportMetaEnv {
   readonly VITE_API_URL: string;
-  // Add other env variables here
+  readonly VITE_API_TIMEOUT: string;
+  readonly VITE_ENV: "development" | "staging" | "production";
 }
 
 interface ImportMeta {

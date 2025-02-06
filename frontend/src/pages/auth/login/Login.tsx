@@ -45,7 +45,8 @@ export default function Login(): ReactElement {
         {
           id: "1",
           email: data.email,
-          name: "Test User",
+          firstName: "Test",
+          lastName: "User",
         },
         "mock-token"
       );

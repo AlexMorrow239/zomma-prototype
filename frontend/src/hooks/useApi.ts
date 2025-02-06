@@ -5,63 +5,85 @@ import {
   type UseQueryOptions,
 } from "@tanstack/react-query";
 
-interface FetchOptions {
-  method?: string;
-  headers?: Record<string, string>;
-  body?: unknown;
-}
+import axios, { AxiosError, type AxiosRequestConfig } from "axios";
 
-const API_BASE_URL =
-  import.meta.env.VITE_API_BASE_URL || "http://localhost:3000/api";
+import { useAuthStore } from "@/stores/authStore";
 
+// Create axios instance
+const axiosInstance = axios.create({
+  baseURL: import.meta.env.VITE_API_BASE_URL || "http://localhost:3000/api",
+  withCredentials: true,
+});
+
+// Add interceptors
+axiosInstance.interceptors.request.use((config) => {
+  const token = useAuthStore.getState().token;
+  if (token) {
+    config.headers.Authorization = `Bearer ${token}`;
+  }
+  return config;
+});
+
+axiosInstance.interceptors.response.use(
+  (response) => response,
+  (error: AxiosError) => {
+    if (error.response?.status === 401) {
+      useAuthStore.getState().logout();
+    }
+    return Promise.reject(error);
+  }
+);
+
+// Enhanced fetchApi function using axios
 async function fetchApi<T>(
   endpoint: string,
-  options: FetchOptions = {}
+  options: AxiosRequestConfig = {}
 ): Promise<T> {
-  const { method = "GET", headers = {}, body } = options;
-
-  const response = await fetch(`${API_BASE_URL}${endpoint}`, {
-    method,
-    headers: {
-      "Content-Type": "application/json",
-      ...headers,
-    },
-    body: body ? JSON.stringify(body) : undefined,
-    credentials: "include", // Include cookies in requests
-  });
-
-  if (!response.ok) {
-    const error = await response.json().catch(() => ({}));
-    throw new Error(error.message || "An error occurred");
+  try {
+    const response = await axiosInstance({
+      url: endpoint,
+      ...options,
+    });
+    return response.data;
+  } catch (error) {
+    if (error instanceof AxiosError) {
+      throw new Error(error.response?.data?.message || "An error occurred");
+    }
+    throw error;
   }
-
-  return response.json();
 }
 
 export function useApiQuery<T>(
   endpoint: string,
   options?: UseQueryOptions<T, Error, T, readonly [string]> & {
-    onSuccess?: (data: T) => void;
-    onError?: (error: Error) => void;
+    axiosConfig?: AxiosRequestConfig;
   }
 ) {
+  const { axiosConfig, ...queryOptions } = options || {};
+
   return useQuery<T, Error, T, readonly [string]>({
     queryKey: [endpoint],
-    queryFn: () => fetchApi<T>(endpoint),
-    ...options,
+    queryFn: () => fetchApi<T>(endpoint, axiosConfig),
+    ...queryOptions,
   });
 }
 
 export function useApiMutation<TData, TVariables>(
   endpoint: string,
-  options?: Omit<UseMutationOptions<TData, Error, TVariables>, "mutationFn">
+  options?: Omit<UseMutationOptions<TData, Error, TVariables>, "mutationFn"> & {
+    method?: "POST" | "PUT" | "PATCH" | "DELETE";
+    axiosConfig?: Omit<AxiosRequestConfig, "method" | "data">;
+  }
 ) {
+  const { method = "POST", axiosConfig, ...mutationOptions } = options || {};
+
   return useMutation<TData, Error, TVariables>({
     mutationFn: (variables) =>
       fetchApi<TData>(endpoint, {
-        method: "POST",
-        body: variables,
+        method,
+        data: variables,
+        ...axiosConfig,
       }),
-    ...options,
+    ...mutationOptions,
   });
 }

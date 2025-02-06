@@ -10,6 +10,7 @@ import { FormField } from "@/components/common/form-field/FormField";
 import { PasswordField } from "@/components/common/password-field/PasswordField";
 
 import { useAuthStore } from "@/stores/authStore";
+import { User } from "@/types";
 
 import "./Registration.scss";
 
@@ -58,8 +59,9 @@ export default function Registration(): ReactElement {
         {
           id: "1",
           email: data.email,
-          name: `${data.firstName} ${data.lastName}`,
-        },
+          firstName: data.firstName,
+          lastName: data.lastName,
+        } as User,
         "mock-token"
       );
 

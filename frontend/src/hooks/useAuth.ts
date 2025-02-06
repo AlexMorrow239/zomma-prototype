@@ -1,22 +1,9 @@
 import { useQueryClient } from "@tanstack/react-query";
 
 import { useAuthStore } from "@/stores/authStore";
+import { LoginCredentials, LoginResponse } from "@/types";
 
 import { useApiMutation, useApiQuery } from "./useApi";
-
-interface LoginCredentials {
-  email: string;
-  password: string;
-}
-
-interface LoginResponse {
-  user: {
-    id: string;
-    email: string;
-    name: string;
-  };
-  token: string;
-}
 
 export function useAuth() {
   const queryClient = useQueryClient();
@@ -45,7 +32,6 @@ export function useAuth() {
     enabled: !!token,
     retry: false,
     queryKey: ["user"],
-    onError: () => storeLogout(),
   });
 
   return {

@@ -7,34 +7,12 @@ import type {
   UseFormReturn,
 } from "react-hook-form";
 
+import {
+  ProspectFormData,
+  ProspectFormPaths,
+} from "@/pages/prospect-questionnaire/schema";
+
 import "./FormField.scss";
-
-interface ProspectFormData {
-  contact: {
-    firstName: string;
-    lastName: string;
-    email: string;
-    phone: string;
-    preferredContact: "email" | "phone" | "text";
-    businessName?: string;
-  };
-  goals: {
-    financialGoals: string;
-    challenges: string;
-  };
-  services: {
-    selectedServices: string[];
-  };
-  budget: {
-    budgetRange: string;
-  };
-}
-
-type ProspectFormPaths =
-  | `contact.${keyof ProspectFormData["contact"]}`
-  | `goals.${keyof ProspectFormData["goals"]}`
-  | `services.${keyof ProspectFormData["services"]}`
-  | `budget.${keyof ProspectFormData["budget"]}`;
 
 interface BaseFormFieldProps<T> {
   label: string;
