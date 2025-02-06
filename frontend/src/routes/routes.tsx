@@ -2,9 +2,8 @@ import { createBrowserRouter, Navigate } from "react-router-dom";
 
 import { MainLayout } from "@/components/layout/main-layout/MainLayout";
 
-import { ErrorDisplay } from "@/pages/error-boundary/ErrorBoundary";
 import NotFound from "@/pages/not-found/NotFound";
-import Prospectquestionnaire from "@/pages/prospect-questionnaire/Prospectquestionnaire";
+import Prospectquestionnaire from "@/pages/prospect-questionnaire/ProspectQuestionnaire";
 
 import { AuthRouter } from "./AuthRouter";
 
@@ -12,7 +11,6 @@ export const router = createBrowserRouter([
   {
     path: "/",
     element: <MainLayout />,
-    errorElement: <ErrorDisplay />,
     children: [
       {
         index: true,

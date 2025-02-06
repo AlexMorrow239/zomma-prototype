@@ -1,6 +1,6 @@
 import { Navigate, Outlet, useLocation } from "react-router-dom";
 
-import { useAppSelector } from "@/store";
+import { useAppSelector } from "@/stores";
 
 export const ProtectedLayout = (): JSX.Element => {
   const { isAuthenticated } = useAppSelector((state) => state.auth);

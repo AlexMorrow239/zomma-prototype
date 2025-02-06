@@ -24,8 +24,8 @@ export default defineConfig({
         manualChunks: {
           react: ["react", "react-dom"],
           router: ["react-router-dom"],
-          redux: ["@reduxjs/toolkit", "react-redux", "redux-persist"],
-        },
+          query: ["@tanstack/react-query"],
+          zustand: ["zustand"],        },
       },
     },
   },
