@@ -1,17 +1,13 @@
 import { Navigate, Outlet, useLocation } from "react-router-dom";
 
-// Temporary authentication check - you can replace this with your actual auth logic later
-const useAuth = () => {
-  // For now, just check if there's a token in localStorage
-  const isAuthenticated = !!localStorage.getItem("token");
-  return { isAuthenticated };
-};
+import { useAuthStore } from "@/stores/authStore";
 
 export const ProtectedRoute = (): React.ReactElement => {
-  const { isAuthenticated } = useAuth();
+  const token = useAuthStore((state) => state.token);
   const location = useLocation();
 
-  if (!isAuthenticated) {
+  if (!token) {
+    // Redirect to login page with return location
     return <Navigate to="/auth/login" state={{ from: location }} replace />;
   }
 
