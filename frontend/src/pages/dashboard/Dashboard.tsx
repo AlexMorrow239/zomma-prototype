@@ -6,7 +6,7 @@ import { Button } from "@/components/common/button/Button";
 import { EditProfileModal } from "@/components/edit-profile-modal/EditProfileModal";
 import { ProspectDetails } from "@/components/prospect-details/ProspectDetails";
 
-import { mockProspect } from "@/assets/mocks";
+import { mockProspects } from "@/assets/mocks";
 import type { User as UserType } from "@/types";
 
 import "./Dashboard.scss";
@@ -16,6 +16,7 @@ import "./Dashboard.scss";
 export default function Dashboard() {
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
   const [isEditProfileOpen, setIsEditProfileOpen] = useState(false);
+  const [selectedProspect, setSelectedProspect] = useState(mockProspects[0]);
   const [profile, setProfile] = useState<UserType>({
     id: "1",
     firstName: "John",
@@ -96,7 +97,32 @@ export default function Dashboard() {
         </div>
       </header>
       <main className="dashboard-content">
-        <ProspectDetails prospect={mockProspect} />
+        <div className="prospects-container">
+          <div className="prospects-list">
+            {mockProspects.map((prospect) => (
+              <div
+                key={prospect.id}
+                className={`prospect-item ${
+                  selectedProspect.id === prospect.id ? "selected" : ""
+                }`}
+                onClick={() => setSelectedProspect(prospect)}
+              >
+                <h3>{prospect.contact.businessName}</h3>
+                <p>
+                  {prospect.contact.firstName} {prospect.contact.lastName}
+                </p>
+                <span
+                  className={`status ${prospect.contacted ? "contacted" : "new"}`}
+                >
+                  {prospect.contacted ? "Contacted" : "New"}
+                </span>
+              </div>
+            ))}
+          </div>
+          <div className="prospect-details">
+            <ProspectDetails prospect={selectedProspect} />
+          </div>
+        </div>
       </main>
       <EditProfileModal
         isOpen={isEditProfileOpen}
