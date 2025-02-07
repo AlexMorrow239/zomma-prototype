@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 
 import { AlertTriangle, CheckCircle2, Info, X, XCircle } from "lucide-react";
 
@@ -8,7 +8,6 @@ export interface ToastProps {
   id: string;
   type: "success" | "error" | "warning" | "info";
   message: string;
-  duration?: number;
   onClose: (id: string) => void;
 }
 
@@ -19,37 +18,37 @@ const icons = {
   info: Info,
 };
 
-export const Toast: React.FC<ToastProps> = ({
-  id,
-  type,
-  message,
-  duration = 5000,
-  onClose,
-}) => {
+export const Toast: React.FC<ToastProps> = ({ id, type, message, onClose }) => {
   const [isExiting, setIsExiting] = useState(false);
   const Icon = icons[type];
 
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      setIsExiting(true);
-      setTimeout(() => onClose(id), 200); // Wait for exit animation
-    }, duration);
+  const handleClose = () => {
+    setIsExiting(true);
+    setTimeout(() => onClose(id), 200);
+  };
 
-    return (): void => clearTimeout(timer);
-  }, [duration, id, onClose]);
+  // Handle keyboard events
+  const handleKeyDown = (event: React.KeyboardEvent) => {
+    if (event.key === "Escape") {
+      handleClose();
+    }
+  };
 
   return (
-    <div className={`toast toast--${type} ${isExiting ? "toast--exit" : ""}`}>
+    <div
+      role="alert"
+      aria-live={type === "error" ? "assertive" : "polite"}
+      className={`toast toast--${type} ${isExiting ? "toast--exit" : ""}`}
+      onKeyDown={handleKeyDown}
+      tabIndex={0}
+    >
       <Icon className="toast__icon" aria-hidden="true" />
       <div className="toast__content">
         <p className="toast__message">{message}</p>
       </div>
       <button
         className="toast__close"
-        onClick={() => {
-          setIsExiting(true);
-          setTimeout(() => onClose(id), 200);
-        }}
+        onClick={handleClose}
         aria-label="Close notification"
       >
         <X size={16} />

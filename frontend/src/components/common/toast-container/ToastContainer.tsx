@@ -1,16 +1,24 @@
+import { type ReactElement } from "react";
+
 import { useUIStore } from "@/stores/uiStore";
-import type { ToastType } from "@/types";
 
 import { Toast } from "./toast/Toast";
+import "./ToastContainer.scss";
 
-export const ToastContainer: React.FC = () => {
+export function ToastContainer(): ReactElement {
   const { toasts, removeToast } = useUIStore();
 
   return (
     <div className="toast-container">
-      {toasts.map((toast: ToastType) => (
-        <Toast key={toast.id} {...toast} onClose={removeToast} />
+      {toasts.map((toast) => (
+        <Toast
+          key={toast.id}
+          id={toast.id}
+          type={toast.type}
+          message={toast.message}
+          onClose={removeToast}
+        />
       ))}
     </div>
   );
-};
+}

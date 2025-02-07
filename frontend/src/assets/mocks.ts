@@ -1,6 +1,10 @@
-import { ProspectFormData } from "@/pages/prospect-questionnaire/schema";
+import { Prospect } from "@/types";
 
-export const mockProspect: ProspectFormData = {
+export const mockProspect: Prospect = {
+  id: "mock-prospect-1",
+  contacted: false,
+  createdAt: "2024-03-20T12:00:00Z",
+  updatedAt: "2024-03-20T12:00:00Z",
   contact: {
     firstName: "John",
     lastName: "Doe",

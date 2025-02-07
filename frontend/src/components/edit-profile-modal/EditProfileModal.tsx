@@ -1,12 +1,13 @@
 import { type ReactElement } from "react";
 
+import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 
 import { Button } from "@/components/common/button/Button";
 import { FormField } from "@/components/common/form-field/FormField";
 import { Modal } from "@/components/common/modal/Modal";
 
-import { EditProfileForm } from "@/schemas/userSchemas";
+import { EditProfileForm, editProfileSchema } from "@/schemas/userSchemas";
 import type { User } from "@/types";
 
 interface EditProfileModalProps {
@@ -28,6 +29,7 @@ export function EditProfileModal({
       lastName: user.lastName,
       email: user.email,
     },
+    resolver: zodResolver(editProfileSchema),
   });
 
   const handleSubmit = form.handleSubmit((data) => {

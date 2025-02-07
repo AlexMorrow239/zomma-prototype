@@ -2,6 +2,7 @@ import { ReactElement, useState } from "react";
 
 import { Link, NavLink } from "react-router-dom";
 
+import Logo from "@/assets/logo.png";
 import { navigationItems } from "@/config/navigation";
 
 import "./NavBar.scss";
@@ -22,7 +23,13 @@ export const NavBar = (): ReactElement => {
       <div className="nav__container">
         <div className="nav__brand">
           <Link to="/" className="nav__logo" onClick={handleNavLinkClick}>
-            {/* Brand name or text can go here */}
+            <img src={Logo} alt="Company Logo" className="nav__logo-image" />
+            <span className="nav__logo-text nav__logo-text--mobile">
+              Financial Guidance
+            </span>
+            <span className="nav__logo-text nav__logo-text--desktop">
+              Guiding you through with advice that suits your financial needs
+            </span>
           </Link>
         </div>
 

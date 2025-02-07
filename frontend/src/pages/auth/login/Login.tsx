@@ -55,7 +55,7 @@ export default function Login(): ReactElement {
   return (
     <div className="login">
       <div className="login__container">
-        <h1 className="login__title">Partener Login</h1>
+        <h1 className="login__title">Partner Login</h1>
         <p className="login__subtitle">Sign in to manage clients</p>
 
         <form

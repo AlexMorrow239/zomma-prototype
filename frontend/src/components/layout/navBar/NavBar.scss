@@ -28,6 +28,40 @@
   &__logo {
     @include flex(row, flex-start, center);
     text-decoration: none;
+    gap: var(--spacing-2);
+    max-width: 100%;
+
+    &-image {
+      height: 32px;
+      width: auto;
+      flex-shrink: 0;
+    }
+
+    &-text {
+      color: var(--color-text-light);
+      font-size: var(--font-size-sm);
+      font-weight: var(--font-weight-medium);
+      line-height: var(--line-height-snug);
+
+      &--mobile {
+        display: block;
+
+        @include respond-to("md") {
+          display: none;
+        }
+      }
+
+      &--desktop {
+        display: none;
+
+        @include respond-to("md") {
+          display: block;
+          max-width: 300px;
+          font-style: italic;
+          letter-spacing: 0.01em;
+        }
+      }
+    }
   }
 
   /* Mobile Menu Toggle */

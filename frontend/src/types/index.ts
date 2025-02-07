@@ -1,4 +1,6 @@
-export interface ToastType {
+import { ProspectFormData } from "@/pages/prospect-questionnaire/schema";
+
+export interface Toast {
   id: string;
   type: "success" | "error" | "warning" | "info";
   message: string;
@@ -49,4 +51,11 @@ export interface ApiError {
   message: string;
   code: string;
   details?: Record<string, string[]>;
+}
+
+export interface Prospect extends ProspectFormData {
+  id: string;
+  contacted: boolean;
+  createdAt?: string;
+  updatedAt?: string;
 }

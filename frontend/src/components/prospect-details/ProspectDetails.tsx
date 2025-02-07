@@ -1,12 +1,16 @@
-import { ProspectFormData } from "@/pages/prospect-questionnaire/schema";
+import { useUIStore } from "@/stores/uiStore";
+import { Prospect } from "@/types";
 
+import { Button } from "../common/button/Button";
 import "./ProspectDetails.scss";
 
 interface ProspectDetailsProps {
-  prospect: ProspectFormData;
+  prospect: Prospect;
 }
 
 export function ProspectDetails({ prospect }: ProspectDetailsProps) {
+  const { addToast } = useUIStore();
+
   const getBudgetRangeLabel = (value: string): string => {
     const budgetRanges: Record<string, string> = {
       below5k: "Below $5,000",
@@ -18,8 +22,37 @@ export function ProspectDetails({ prospect }: ProspectDetailsProps) {
     return budgetRanges[value] || value;
   };
 
+  const handleMarkContacted = async () => {
+    // TODO: Implement once backend is ready
+    addToast({
+      type: "success",
+      message: "Prospect marked as contacted",
+    });
+    console.log("Mark contacted clicked - Not yet implemented");
+  };
+
   return (
     <div className="prospect-details">
+      <div className="prospect-header">
+        <div className="contact-status">
+          <span
+            className={`status-indicator ${prospect.contacted ? "contacted" : "not-contacted"}`}
+          >
+            {prospect.contacted ? "Contacted" : "Not Contacted"}
+          </span>
+
+          {!prospect.contacted && (
+            <Button
+              variant="primary"
+              onClick={handleMarkContacted}
+              isLoading={false} // TODO: Use actual loading state once implemented
+            >
+              Mark as Contacted
+            </Button>
+          )}
+        </div>
+      </div>
+
       <section className="details-section">
         <h2>Contact Information</h2>
         <div className="details-grid">
