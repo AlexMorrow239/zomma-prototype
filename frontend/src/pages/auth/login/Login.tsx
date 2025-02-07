@@ -4,36 +4,28 @@ import { Link, useNavigate } from "react-router-dom";
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
-import { z } from "zod";
 
 import { Button } from "@/components/common/button/Button";
 import { FormField } from "@/components/common/form-field/FormField";
 import { PasswordField } from "@/components/common/password-field/PasswordField";
 
+import { LoginForm, loginSchema } from "@/schemas/userSchemas";
 import { useAuthStore } from "@/stores/authStore";
 
 import "./Login.scss";
-
-// Define the form validation schema
-const loginSchema = z.object({
-  email: z.string().email("Invalid email address"),
-  password: z.string().min(1, "Password is required"),
-});
-
-type loginForm = z.infer<typeof loginSchema>;
 
 export default function Login(): ReactElement {
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(false);
 
-  const form = useForm<loginForm>({
+  const form = useForm<LoginForm>({
     resolver: zodResolver(loginSchema),
     mode: "onChange",
   });
 
   const { handleSubmit } = form;
 
-  const onSubmit = async (data: loginForm): Promise<void> => {
+  const onSubmit = async (data: LoginForm): Promise<void> => {
     setIsLoading(true);
     try {
       // Accept any valid input for development

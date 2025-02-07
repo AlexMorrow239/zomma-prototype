@@ -7,15 +7,59 @@
 
   .dashboard-header {
     margin-bottom: var(--spacing-8);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
 
     h1 {
       font-size: var(--font-size-2xl);
       font-weight: var(--font-weight-bold);
       color: var(--color-text);
     }
-  }
 
-  .dashboard-content {
-    // Add any additional styling for the content container if needed
+    .user-menu {
+      position: relative;
+
+      .user-button {
+        display: flex;
+        align-items: center;
+        gap: var(--spacing-2);
+        padding: var(--spacing-2) var(--spacing-3);
+        border-radius: var(--border-radius);
+        background: var(--color-background-alt);
+        border: 1px solid var(--color-border);
+        cursor: pointer;
+
+        &:hover {
+          background: var(--color-background-hover);
+        }
+      }
+
+      .user-dropdown {
+        position: absolute;
+        top: 100%;
+        right: 0;
+        margin-top: var(--spacing-1);
+        background: var(--color-background);
+        border: 1px solid var(--color-border);
+        border-radius: var(--border-radius);
+        box-shadow: var(--shadow-md);
+        min-width: 200px;
+
+        .dropdown-item {
+          display: flex;
+          align-items: center;
+          gap: var(--spacing-2);
+          padding: var(--spacing-2) var(--spacing-3);
+          color: var(--color-text);
+          text-decoration: none;
+          cursor: pointer;
+
+          &:hover {
+            background: var(--color-background-hover);
+          }
+        }
+      }
+    }
   }
 }

@@ -1,0 +1,29 @@
+.edit-profile-form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-4);
+
+  .form-group {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-2);
+
+    label {
+      font-weight: var(--font-weight-medium);
+      color: var(--color-text);
+    }
+
+    input {
+      padding: var(--spacing-2) var(--spacing-3);
+      border: 1px solid var(--color-border);
+      border-radius: var(--border-radius);
+      background: var(--color-background);
+      color: var(--color-text);
+
+      &:focus {
+        outline: none;
+        border-color: var(--color-primary);
+      }
+    }
+  }
+}

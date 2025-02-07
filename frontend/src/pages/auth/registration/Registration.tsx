@@ -4,37 +4,16 @@ import { Link, useNavigate } from "react-router-dom";
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
-import { z } from "zod";
 
 import { Button } from "@/components/common/button/Button";
 import { FormField } from "@/components/common/form-field/FormField";
 import { PasswordField } from "@/components/common/password-field/PasswordField";
 
+import { RegistrationForm, registrationSchema } from "@/schemas/userSchemas";
 import { useAuthStore } from "@/stores/authStore";
 import { User } from "@/types";
 
 import "./Registration.scss";
-
-const registrationSchema = z
-  .object({
-    email: z.string().email("Invalid email address"),
-    password: z
-      .string()
-      .min(8, "Password must be at least 8 characters")
-      .regex(
-        /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/,
-        "Password must contain at least one uppercase letter, one lowercase letter, and one number"
-      ),
-    confirmPassword: z.string(),
-    firstName: z.string().min(1, "First name is required"),
-    lastName: z.string().min(1, "Last name is required"),
-  })
-  .refine((data) => data.password === data.confirmPassword, {
-    message: "Passwords don't match",
-    path: ["confirmPassword"],
-  });
-
-type RegistrationForm = z.infer<typeof registrationSchema>;
 
 export default function Registration(): ReactElement {
   const navigate = useNavigate();
