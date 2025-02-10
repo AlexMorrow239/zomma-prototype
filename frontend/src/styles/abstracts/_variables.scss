@@ -1,25 +1,25 @@
 @use "sass:color";
 
 // Base color palette
-$color-gray-50: #f8fafc;
-$color-gray-100: #f1f5f9;
-$color-gray-200: #e2e8f0;
-$color-gray-300: #cbd5e1;
-$color-gray-400: #94a3b8;
-$color-gray-500: #64748b;
-$color-gray-600: #475569;
-$color-gray-700: #334155;
-$color-gray-800: #1e293b;
-$color-gray-900: #0f172a;
+$color-gray-50: #fbfdfa;
+$color-gray-100: #f9e0d2;
+$color-gray-200: #f9d1b9;
+$color-gray-300: #646564;
+$color-gray-400: #707172;
+$color-gray-500: #555859;
+$color-gray-600: #555859;
+$color-gray-700: #555859;
+$color-gray-800: #000000;
+$color-gray-900: #000000;
 
 // Brand colors
-$color-primary-300: #9ed18c;
-$color-primary-400: #7ec265; // Bonsai Green
-$color-primary-500: #005030; // Miami Green
-$color-primary-600: #004528; // Darker shade for depth
-$color-accent-400: #f47321; // UM Orange
-$color-accent-500: #d65d0e; // Darker UM Orange
-$color-accent-600: #b34700; // Deepest Orange for depth
+$color-primary-300: #fe5d2f;
+$color-primary-400: #fc6100;
+$color-primary-500: #f86420;
+$color-primary-600: color.adjust(#f86420, $lightness: -10%);
+$color-accent-400: #116dff;
+$color-accent-500: color.adjust(#116dff, $lightness: -10%);
+$color-accent-600: color.adjust(#116dff, $lightness: -20%);
 
 // Text colors
 $text-color: $color-gray-700;
@@ -66,7 +66,6 @@ $text-color-light: $color-gray-500;
   --color-info-light: #{color.adjust(#3b82f6, $lightness: 42%)};
 
   // Typography System
-  // Modern font stack
   --font-primary: "Roboto", system-ui, -apple-system, BlinkMacSystemFont,
     "Segoe UI", Roboto, "Helvetica Neue", sans-serif;
   --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Monaco,

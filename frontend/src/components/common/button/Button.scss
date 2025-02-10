@@ -26,11 +26,11 @@
 
   // Style variants
   &--primary {
-    @include button-variant(--color-primary, --color-white);
+    @include button-variant(--color-primary, --color-background);
   }
 
   &--secondary {
-    @include button-variant(--color-accent, --color-white);
+    @include button-variant(--color-accent, --color-background);
   }
 
   &--outline {
@@ -41,7 +41,7 @@
 
     &:hover:not(:disabled) {
       background-color: var(--color-primary);
-      color: var(--color-white);
+      color: var(--color-background);
     }
   }
 
