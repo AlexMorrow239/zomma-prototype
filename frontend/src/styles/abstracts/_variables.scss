@@ -55,15 +55,15 @@ $text-color-light: $color-gray-500;
   --color-border-focus: #{color.adjust($color-primary-400, $alpha: -0.5)};
 
   // Status colors
-  --color-success: #10b981;
-  --color-success-light: #{color.adjust(#10b981, $lightness: 42%)};
-  --color-error: #ef4444;
-  --color-error-light: #{color.adjust(#ef4444, $lightness: 42%)};
-  --color-error-dark: #{color.adjust(#ef4444, $lightness: -10%)};
-  --color-warning: #f59e0b;
-  --color-warning-light: #{color.adjust(#f59e0b, $lightness: 42%)};
-  --color-info: #3b82f6;
-  --color-info-light: #{color.adjust(#3b82f6, $lightness: 42%)};
+  --color-success: #2d9d78;
+  --color-success-light: #{color.adjust(#2d9d78, $lightness: 42%)};
+  --color-error: #e85d3d;
+  --color-error-light: #{color.adjust(#e85d3d, $lightness: 42%)};
+  --color-error-dark: #{color.adjust(#e85d3d, $lightness: -10%)};
+  --color-warning: #fc6100;
+  --color-warning-light: #{color.adjust(#fc6100, $lightness: 42%)};
+  --color-info: #116dff;
+  --color-info-light: #{color.adjust(#116dff, $lightness: 42%)};
 
   // Typography System
   --font-primary: "Roboto", system-ui, -apple-system, BlinkMacSystemFont,
