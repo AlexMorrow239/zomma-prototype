@@ -1,27 +1,49 @@
+@keyframes overlayShow {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes contentShow {
+  from {
+    opacity: 0;
+    transform: translateY(-2%) scale(0.96);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
 .modal-overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
   background-color: rgba(0, 0, 0, 0.5);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: var(--z-modal);
-  padding: var(--spacing-4);
-  animation: fadeIn 0.2s ease-out;
+  position: fixed;
+  inset: 0;
+  z-index: var(--z-modal-backdrop);
+  animation: overlayShow 150ms cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .modal {
   background-color: var(--color-background);
   border-radius: var(--radius-lg);
   box-shadow: var(--shadow-lg);
-  width: 100%;
-  max-height: calc(100vh - var(--spacing-8));
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 90vw;
+  max-height: 85vh;
+  z-index: var(--z-modal);
   display: flex;
   flex-direction: column;
-  animation: slideIn 0.2s ease-out;
+  animation: contentShow 150ms cubic-bezier(0.16, 1, 0.3, 1);
+
+  &:focus {
+    outline: none;
+  }
 
   // Modal sizes
   &--sm {
@@ -74,31 +96,7 @@
   }
 }
 
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-  }
-  to {
-    opacity: 1;
-  }
-}
-
-@keyframes slideIn {
-  from {
-    transform: translateY(-20px);
-    opacity: 0;
-  }
-  to {
-    transform: translateY(0);
-    opacity: 1;
-  }
-}
-
 @media (max-width: 640px) {
-  .modal-overlay {
-    padding: var(--spacing-2);
-  }
-
   .modal {
     &__header,
     &__content,

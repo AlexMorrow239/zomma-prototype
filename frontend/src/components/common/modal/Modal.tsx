@@ -1,5 +1,6 @@
-import { ReactElement, type ReactNode, useEffect } from "react";
+import { ReactElement, type ReactNode } from "react";
 
+import * as Dialog from "@radix-ui/react-dialog";
 import { X } from "lucide-react";
 
 import { Button } from "../button/Button";
@@ -21,53 +22,29 @@ export function Modal({
   children,
   footer,
   size = "md",
-}: ModalProps): ReactElement | null {
-  useEffect(() => {
-    const handleEscape = (event: KeyboardEvent): void => {
-      if (event.key === "Escape") {
-        onClose();
-      }
-    };
-
-    if (isOpen) {
-      document.addEventListener("keydown", handleEscape);
-      document.body.style.overflow = "hidden";
-    }
-
-    return () => {
-      document.removeEventListener("keydown", handleEscape);
-      document.body.style.overflow = "unset";
-    };
-  }, [isOpen, onClose]);
-
-  if (!isOpen) return null;
-
+}: ModalProps): ReactElement {
   return (
-    <div className="modal-overlay" onClick={onClose}>
-      <div
-        className={`modal modal--${size}`}
-        onClick={(e) => e.stopPropagation()}
-        role="dialog"
-        aria-modal="true"
-        aria-labelledby="modal-title"
-      >
-        <div className="modal__header">
-          <h2 id="modal-title" className="modal__title">
-            {title}
-          </h2>
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={onClose}
-            className="modal__close"
-            aria-label="Close modal"
-          >
-            <X size={20} />
-          </Button>
-        </div>
-        <div className="modal__content">{children}</div>
-        {footer && <div className="modal__footer">{footer}</div>}
-      </div>
-    </div>
+    <Dialog.Root open={isOpen} onOpenChange={(open) => !open && onClose()}>
+      <Dialog.Portal>
+        <Dialog.Overlay className="modal-overlay" />
+        <Dialog.Content className={`modal modal--${size}`}>
+          <div className="modal__header">
+            <Dialog.Title className="modal__title">{title}</Dialog.Title>
+            <Dialog.Close asChild>
+              <Button
+                variant="ghost"
+                size="sm"
+                className="modal__close"
+                aria-label="Close modal"
+              >
+                <X size={20} />
+              </Button>
+            </Dialog.Close>
+          </div>
+          <div className="modal__content">{children}</div>
+          {footer && <div className="modal__footer">{footer}</div>}
+        </Dialog.Content>
+      </Dialog.Portal>
+    </Dialog.Root>
   );
 }
