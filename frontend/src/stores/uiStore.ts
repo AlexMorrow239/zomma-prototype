@@ -14,16 +14,13 @@ export const useUIStore = create<UIState>((set) => ({
   addToast: (toast) => {
     const id = crypto.randomUUID();
     set((state) => {
-      // Prevent duplicate messages within a short time window
       const isDuplicate = state.toasts.some(
         (t) => t.message === toast.message && t.type === toast.type
       );
       if (isDuplicate) return state;
 
-      // Limit maximum number of toasts
       const maxToasts = 3;
       const newToasts = [...state.toasts, { ...toast, id }].slice(-maxToasts);
-
       return { toasts: newToasts };
     });
 
@@ -33,7 +30,7 @@ export const useUIStore = create<UIState>((set) => ({
       set((state) => ({
         toasts: state.toasts.filter((t) => t.id !== id),
       }));
-    }, duration + 200); // Add 200ms for exit animation
+    }, duration);
   },
   removeToast: (id) =>
     set((state) => ({
