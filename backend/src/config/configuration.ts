@@ -30,5 +30,4 @@ export const serverConfig = registerAs('server', () => ({
 
 export const jwtConfig = registerAs('jwt', () => ({
   secret: process.env.JWT_SECRET,
-  downloadSecret: process.env.JWT_DOWNLOAD_SECRET,
 }));
