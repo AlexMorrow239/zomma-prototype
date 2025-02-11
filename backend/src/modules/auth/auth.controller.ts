@@ -1,5 +1,5 @@
 import { Body, Controller, HttpCode, HttpStatus, Post } from '@nestjs/common';
-import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { ApiBody, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 
 import { AuthResponseDto } from '@/common/dto/auth/auth-response.dto';
 import { ForgotPasswordDto } from '@/common/dto/auth/forgot-password.dto';
@@ -27,10 +27,40 @@ export class AuthController {
     summary: 'Register new user',
     description: 'Creates a new user account in the system',
   })
+  @ApiBody({
+    type: CreateUserDto,
+    description: 'User registration details',
+    examples: {
+      validUser: {
+        value: {
+          email: 'john.doe@example.com',
+          password: 'Password123!',
+          name: {
+            firstName: 'John',
+            lastName: 'Doe',
+          },
+        },
+        summary: 'Valid user registration example',
+      },
+    },
+  })
   @ApiResponse({
     status: 201,
     description: 'User successfully registered',
     type: AuthResponseDto,
+    content: {
+      'application/json': {
+        example: {
+          token: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...',
+          user: {
+            id: '123e4567-e89b-12d3-a456-426614174000',
+            email: 'john.doe@example.com',
+            firstName: 'John',
+            lastName: 'Doe',
+          },
+        },
+      },
+    },
   })
   @ApiResponse({
     status: 400,
@@ -51,6 +81,19 @@ export class AuthController {
   @ApiOperation({
     summary: 'User login',
     description: 'Authenticates a user and returns a JWT token',
+  })
+  @ApiBody({
+    type: LoginDto,
+    description: 'User login credentials',
+    examples: {
+      validLogin: {
+        value: {
+          email: 'john.doe@example.com',
+          password: 'Password123!',
+        },
+        summary: 'Valid login example',
+      },
+    },
   })
   @ApiResponse({
     status: 200,

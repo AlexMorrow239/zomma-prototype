@@ -1,10 +1,17 @@
 import { ApiProperty } from '@nestjs/swagger';
 
-import { IsEmail, IsNotEmpty, IsString, MinLength } from 'class-validator';
+import { Type } from 'class-transformer';
+import {
+  IsEmail,
+  IsNotEmpty,
+  IsString,
+  MinLength,
+  ValidateNested,
+} from 'class-validator';
 
 import { NameDto } from '../base/name.dto';
 
-export class CreateUserDto extends NameDto {
+export class CreateUserDto {
   @ApiProperty({
     example: 'john.doe@example.com',
     description: 'User email address',
@@ -18,4 +25,12 @@ export class CreateUserDto extends NameDto {
   @IsNotEmpty()
   @MinLength(8)
   password: string;
+
+  @ApiProperty({
+    type: NameDto,
+    description: 'User name information',
+  })
+  @ValidateNested()
+  @Type(() => NameDto)
+  name: NameDto;
 }
