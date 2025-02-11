@@ -9,14 +9,40 @@ import { Button } from "@/components/common/button/Button";
 import { FormField } from "@/components/common/form-field/FormField";
 import { PasswordField } from "@/components/common/password-field/PasswordField";
 
+import { useApiMutation } from "@/hooks/useApi";
 import { LoginForm, loginSchema } from "@/schemas/userSchemas";
 import { useAuthStore } from "@/stores/authStore";
+import { useUIStore } from "@/stores/uiStore";
+import { AuthResponse } from "@/types";
+import { handleError } from "@/utils/errorHandler";
 
 import "./Login.scss";
 
 export default function Login(): ReactElement {
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(false);
+  const { addToast } = useUIStore();
+
+  // Set up mutation for login
+  const loginMutation = useApiMutation<AuthResponse, LoginForm>("/auth/login", {
+    onSuccess: (data) => {
+      // Set auth data on successful login
+      useAuthStore.getState().setAuth(data.user, data.token);
+
+      // Show success message
+      addToast({
+        type: "success",
+        message: "Login successful! Welcome back.",
+      });
+
+      // Redirect to dashboard
+      navigate("/dashboard");
+    },
+    onError: (error) => {
+      handleError(error);
+      setIsLoading(false);
+    },
+  });
 
   const form = useForm<LoginForm>({
     resolver: zodResolver(loginSchema),
@@ -28,27 +54,10 @@ export default function Login(): ReactElement {
   const onSubmit = async (data: LoginForm): Promise<void> => {
     setIsLoading(true);
     try {
-      // Accept any valid input for development
-      console.log("Development mode - auto-accepting valid credentials:", data);
-      // Simulate API delay
-      await new Promise((resolve) => setTimeout(resolve, 1000));
-
-      // Set mock auth data
-      useAuthStore.getState().setAuth(
-        {
-          id: "1",
-          email: data.email,
-          firstName: "Test",
-          lastName: "User",
-        },
-        "mock-token"
-      );
-
-      navigate("/dashboard");
-    } catch (err) {
-      console.error("Login error:", err);
-    } finally {
-      setIsLoading(false);
+      await loginMutation.mutateAsync(data);
+    } catch (error) {
+      // Error handling is done in onError callback
+      console.error("Login error:", error);
     }
   };
 

@@ -1,21 +1,36 @@
 import { z } from "zod";
 
 // Base schema for fields common to both registration and profile editing
-export const baseUserSchema = z.object({
-  email: z.string().email("Invalid email address"),
-  firstName: z.string().min(1, "First name is required"),
-  lastName: z.string().min(1, "Last name is required"),
+const nameSchema = z.object({
+  firstName: z
+    .string()
+    .trim()
+    .min(1, "First name is required")
+    .max(50, "First name cannot exceed 50 characters"),
+  lastName: z
+    .string()
+    .trim()
+    .min(1, "Last name is required")
+    .max(50, "Last name cannot exceed 50 characters"),
 });
 
-// Password validation schema
+export const baseUserSchema = z.object({
+  email: z.string().email("Invalid email address"),
+  name: nameSchema,
+});
+
+// Base password validation schema
+const passwordValidation = z
+  .string()
+  .min(8, "Password must be at least 8 characters")
+  .max(100, "Password cannot exceed 100 characters");
+
+// Full password schema for registration (with confirmation and strict rules)
 const passwordSchema = z.object({
-  password: z
-    .string()
-    .min(8, "Password must be at least 8 characters")
-    .regex(
-      /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/,
-      "Password must contain at least one uppercase letter, one lowercase letter, and one number"
-    ),
+  password: passwordValidation.regex(
+    /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*])/,
+    "Password must contain at least one uppercase letter, one lowercase letter, one number, and one special character (!@#$%^&*)"
+  ),
   confirmPassword: z.string(),
 });
 
@@ -29,8 +44,13 @@ export const registrationSchema = baseUserSchema
 
 // Login schema
 export const loginSchema = z.object({
-  email: z.string().email("Invalid email address"),
-  password: z.string().min(1, "Password is required"),
+  email: z
+    .string()
+    .trim()
+    .min(1, "Email is required")
+    .email("Invalid email address")
+    .max(255, "Email cannot exceed 255 characters"),
+  password: passwordValidation,
 });
 
 // Profile edit schema (just uses the base schema)

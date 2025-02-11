@@ -29,8 +29,10 @@ export interface RegisterData {
   email: string;
   password: string;
   confirmPassword: string;
-  firstName: string;
-  lastName: string;
+  name: {
+    firstName: string;
+    lastName: string;
+  };
 }
 
 // Response Types
@@ -42,8 +44,10 @@ export interface AuthResponse {
 export interface User {
   id: string;
   email: string;
-  firstName: string;
-  lastName: string;
+  name: {
+    firstName: string;
+    lastName: string;
+  };
 }
 
 // Error Types

@@ -117,14 +117,23 @@ function setupSwagger(app: any, logger: Logger) {
 
 async function logServerInformation(app: any, port: number, logger: Logger) {
   const serverUrl = await app.getUrl();
+  const isNetworkMode = process.env.NETWORK_MODE === 'true';
+  const networkUrl = `http://${require('os').networkInterfaces()['en0']?.[1]?.address || 'localhost'}:${port}`;
 
   logger.log({
     message: 'Server is running at:',
     endpoints: {
-      local: `http://localhost:${port}`,
-      ipv6: serverUrl,
-      ipv4: `http://127.0.0.1:${port}`,
-      swagger: `http://localhost:${port}/api`,
+      ...(isNetworkMode
+        ? {
+            network: networkUrl,
+            swagger: `${networkUrl}/api`,
+          }
+        : {
+            local: `http://localhost:${port}`,
+            ipv6: serverUrl,
+            ipv4: `http://127.0.0.1:${port}`,
+            swagger: `http://localhost:${port}/api`,
+          }),
     },
   });
 }

@@ -12,7 +12,9 @@ interface UIState {
 export const useUIStore = create<UIState>((set) => ({
   toasts: [],
   addToast: (toast) => {
-    const id = crypto.randomUUID();
+    const id =
+      Math.random().toString(36).substring(2) + Date.now().toString(36);
+
     set((state) => {
       const isDuplicate = state.toasts.some(
         (t) => t.message === toast.message && t.type === toast.type
