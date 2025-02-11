@@ -91,35 +91,35 @@ export class UsersController {
 
   //#region Security Operations
 
-  @Post('change-password')
-  @UseGuards(JwtAuthGuard)
-  @HttpCode(HttpStatus.OK)
-  @ApiOperation({
-    summary: 'Change password',
-    description: "Changes the authenticated user's password",
-  })
-  @ApiResponse({
-    status: 200,
-    description: 'Password changed successfully',
-  })
-  @ApiResponse({
-    status: 400,
-    description: 'Bad Request - Invalid password format or same as current',
-  })
-  @ApiResponse({
-    status: 401,
-    description: 'Unauthorized - Invalid current password or token',
-  })
-  async changePassword(
-    @GetUser() user: User,
-    @Body() changePasswordDto: ChangePasswordDto
-  ): Promise<void> {
-    await this.usersService.changeUserPassword(
-      user.id,
-      changePasswordDto.currentPassword,
-      changePasswordDto.newPassword
-    );
-  }
+  // @Post('change-password')
+  // @UseGuards(JwtAuthGuard)
+  // @HttpCode(HttpStatus.OK)
+  // @ApiOperation({
+  //   summary: 'Change password',
+  //   description: "Changes the authenticated user's password",
+  // })
+  // @ApiResponse({
+  //   status: 200,
+  //   description: 'Password changed successfully',
+  // })
+  // @ApiResponse({
+  //   status: 400,
+  //   description: 'Bad Request - Invalid password format or same as current',
+  // })
+  // @ApiResponse({
+  //   status: 401,
+  //   description: 'Unauthorized - Invalid current password or token',
+  // })
+  // async changePassword(
+  //   @GetUser() user: User,
+  //   @Body() changePasswordDto: ChangePasswordDto
+  // ): Promise<void> {
+  //   await this.usersService.changeUserPassword(
+  //     user.id,
+  //     changePasswordDto.currentPassword,
+  //     changePasswordDto.newPassword
+  //   );
+  // }
 
   //#endregion
 }

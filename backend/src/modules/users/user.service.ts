@@ -130,37 +130,37 @@ export class UsersService {
    * @throws UnauthorizedException if current password is incorrect
    * @throws BadRequestException if new password is same as current or invalid
    */
-  async changeUserPassword(
-    userId: string,
-    currentPassword: string,
-    newPassword: string
-  ): Promise<void> {
-    const user = await this.userModel.findById(userId);
-    if (!user) {
-      throw new NotFoundException('User not found');
-    }
+  // async changeUserPassword(
+  //   userId: string,
+  //   currentPassword: string,
+  //   newPassword: string
+  // ): Promise<void> {
+  //   const user = await this.userModel.findById(userId);
+  //   if (!user) {
+  //     throw new NotFoundException('User not found');
+  //   }
 
-    const isPasswordValid = await bcrypt.compare(
-      currentPassword,
-      user.password
-    );
-    if (!isPasswordValid) {
-      throw new UnauthorizedException('Current password is incorrect');
-    }
+  //   const isPasswordValid = await bcrypt.compare(
+  //     currentPassword,
+  //     user.password
+  //   );
+  //   if (!isPasswordValid) {
+  //     throw new UnauthorizedException('Current password is incorrect');
+  //   }
 
-    const isSamePassword = await bcrypt.compare(newPassword, user.password);
-    if (isSamePassword) {
-      throw new BadRequestException(
-        'New password must be different from current password'
-      );
-    }
+  //   const isSamePassword = await bcrypt.compare(newPassword, user.password);
+  //   if (isSamePassword) {
+  //     throw new BadRequestException(
+  //       'New password must be different from current password'
+  //     );
+  //   }
 
-    // Validate password strength
-    this.validatePassword(newPassword);
+  //   // Validate password strength
+  //   this.validatePassword(newPassword);
 
-    const hashedPassword = await bcrypt.hash(newPassword, 10);
-    await this.userModel.findByIdAndUpdate(userId, {
-      password: hashedPassword,
-    });
-  }
+  //   const hashedPassword = await bcrypt.hash(newPassword, 10);
+  //   await this.userModel.findByIdAndUpdate(userId, {
+  //     password: hashedPassword,
+  //   });
+  // }
 }

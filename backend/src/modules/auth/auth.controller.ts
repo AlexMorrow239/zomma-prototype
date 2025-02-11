@@ -2,9 +2,7 @@ import { Body, Controller, HttpCode, HttpStatus, Post } from '@nestjs/common';
 import { ApiBody, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 
 import { AuthResponseDto } from '@/common/dto/auth/auth-response.dto';
-import { ForgotPasswordDto } from '@/common/dto/auth/forgot-password.dto';
 import { LoginDto } from '@/common/dto/auth/login.dto';
-import { ResetPasswordDto } from '@/common/dto/auth/reset-password.dto';
 import { CreateUserDto } from '@/common/dto/users';
 
 import { AuthService } from './auth.service';
