@@ -1,7 +1,8 @@
+import { Button } from "@/components/common/button/Button";
+
 import { useUIStore } from "@/stores/uiStore";
 import { Prospect } from "@/types";
 
-import { Button } from "../common/button/Button";
 import "./ProspectDetails.scss";
 
 interface ProspectDetailsProps {

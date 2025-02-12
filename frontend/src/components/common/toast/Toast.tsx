@@ -1,11 +1,11 @@
 import { type ReactElement } from "react";
 
-import * as Toast from "@radix-ui/react-toast";
+import * as RadixToast from "@radix-ui/react-toast";
 import { AlertTriangle, CheckCircle2, Info, X, XCircle } from "lucide-react";
 
 import { useUIStore } from "@/stores/uiStore";
 
-import "./ToastContainer.scss";
+import "./Toast.scss";
 
 const icons = {
   success: CheckCircle2,
@@ -14,33 +14,33 @@ const icons = {
   info: Info,
 };
 
-export function ToastContainer(): ReactElement {
+export function Toast(): ReactElement {
   const { toasts, removeToast } = useUIStore();
 
   return (
-    <Toast.Provider swipeDirection="right">
+    <RadixToast.Provider swipeDirection="right">
       {toasts.map((toast) => {
         const Icon = icons[toast.type];
         return (
-          <Toast.Root
+          <RadixToast.Root
             key={toast.id}
             className={`toast toast--${toast.type}`}
             onOpenChange={(open) => !open && removeToast(toast.id)}
           >
             <Icon className="toast__icon" aria-hidden="true" />
-            <Toast.Description className="toast__message">
+            <RadixToast.Description className="toast__message">
               {toast.message}
-            </Toast.Description>
-            <Toast.Close
+            </RadixToast.Description>
+            <RadixToast.Close
               className="toast__close"
               aria-label="Close notification"
             >
               <X size={16} />
-            </Toast.Close>
-          </Toast.Root>
+            </RadixToast.Close>
+          </RadixToast.Root>
         );
       })}
-      <Toast.Viewport className="toast-container" />
-    </Toast.Provider>
+      <RadixToast.Viewport className="toast-container" />
+    </RadixToast.Provider>
   );
 }

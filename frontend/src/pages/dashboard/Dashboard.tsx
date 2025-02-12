@@ -8,9 +8,9 @@ import { LogOut, Settings, User, X } from "lucide-react";
 
 import { Button } from "@/components/common/button/Button";
 import Loader from "@/components/common/loader/Loader";
-import { EditProfileModal } from "@/components/edit-profile-modal/EditProfileModal";
-import { ProspectDetails } from "@/components/prospect-details/ProspectDetails";
-import { ProspectsList } from "@/components/prospects-list/ProspectsList";
+import { EditProfileModal } from "@/components/features/edit-profile-modal/EditProfileModal";
+import { ProspectDetails } from "@/components/features/prospect-details/ProspectDetails";
+import { ProspectsList } from "@/components/features/prospects-list/ProspectsList";
 
 import { mockProspects } from "@/assets/mocks";
 import { useApiMutation, useApiQuery } from "@/hooks/useApi";
