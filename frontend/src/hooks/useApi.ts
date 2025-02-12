@@ -13,6 +13,10 @@ import { useAuthStore } from "@/stores/authStore";
 const axiosInstance = axios.create({
   baseURL: import.meta.env.VITE_API_URL || "http://localhost:3000/api",
   withCredentials: true,
+  headers: {
+    "Content-Type": "application/json",
+    Accept: "application/json",
+  },
 });
 
 // Add interceptors
@@ -26,11 +30,24 @@ axiosInstance.interceptors.request.use((config) => {
 
 axiosInstance.interceptors.response.use(
   (response) => response,
-  (error: AxiosError) => {
+  async (error: AxiosError) => {
+    // Handle 401 Unauthorized errors
     if (error.response?.status === 401) {
       useAuthStore.getState().logout();
     }
-    return Promise.reject(error);
+
+    // Handle network errors
+    if (!error.response) {
+      throw new Error("Network error occurred. Please check your connection.");
+    }
+
+    // Handle API errors with proper error message extraction
+    const errorMessage =
+      (error.response?.data as { message?: string; error?: string })?.message ||
+      (error.response?.data as { message?: string; error?: string })?.error ||
+      "An unexpected error occurred";
+
+    throw new Error(errorMessage);
   }
 );
 
@@ -55,13 +72,15 @@ async function fetchApi<T>(
 
 export function useApiQuery<T>(
   endpoint: string,
-  options?: UseQueryOptions<T, Error, T, readonly [string]> & {
+  options?: Omit<
+    UseQueryOptions<T, AxiosError, T, readonly [string]>,
+    "queryKey" | "queryFn"
+  > & {
     axiosConfig?: AxiosRequestConfig;
   }
 ) {
   const { axiosConfig, ...queryOptions } = options || {};
-
-  return useQuery<T, Error, T, readonly [string]>({
+  return useQuery<T, AxiosError, T, readonly [string]>({
     queryKey: [endpoint],
     queryFn: () => fetchApi<T>(endpoint, axiosConfig),
     ...queryOptions,

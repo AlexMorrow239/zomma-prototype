@@ -1,4 +1,6 @@
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
+
+import { useNavigate } from "react-router-dom";
 
 import { LogOut, Settings, User, X } from "lucide-react";
 
@@ -7,46 +9,102 @@ import { EditProfileModal } from "@/components/edit-profile-modal/EditProfileMod
 import { ProspectDetails } from "@/components/prospect-details/ProspectDetails";
 
 import { mockProspects } from "@/assets/mocks";
+import { useApiMutation, useApiQuery } from "@/hooks/useApi";
+import { useAuthStore } from "@/stores/authStore";
 import type { User as UserType } from "@/types";
+import { handleError } from "@/utils/errorHandler";
 
 import "./Dashboard.scss";
 
-// Mock data for development - remove once backend is connected
-
 export default function Dashboard() {
+  const navigate = useNavigate();
+  const { user, logout } = useAuthStore();
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
   const [isEditProfileOpen, setIsEditProfileOpen] = useState(false);
   const [selectedProspect, setSelectedProspect] = useState(mockProspects[0]);
-  const [profile, setProfile] = useState<UserType>({
-    id: "1",
-    firstName: "John",
-    lastName: "Doe",
-    email: "john.doe@example.com",
+
+  const { data: profile, isLoading: isProfileLoading } = useApiQuery<UserType>(
+    "/users/profile",
+    {
+      enabled: !!user,
+      retry: 1,
+      staleTime: 30000,
+    }
+  );
+
+  useEffect(() => {
+    if (!user) {
+      navigate("/login");
+    }
+  }, [user, navigate]);
+
+  const updateProfileMutation = useApiMutation<
+    UserType,
+    {
+      name: {
+        firstName: string;
+        lastName: string;
+      };
+      email: string;
+    }
+  >("/users/profile", {
+    method: "PATCH",
+    onSuccess: (data) => {
+      setIsEditProfileOpen(false);
+      // Optionally show a success message or update local state
+    },
+    onError: (error) => {
+      handleError(error);
+    },
   });
+
+  const handleProfileUpdate = async (data: {
+    name: {
+      firstName: string;
+      lastName: string;
+    };
+    email: string;
+  }) => {
+    try {
+      await updateProfileMutation.mutateAsync(data);
+    } catch (error) {
+      // Error handling is done in onError callback
+      console.error("Profile update error:", error);
+    }
+  };
 
   const closeMenu = useCallback(() => {
     setIsUserMenuOpen(false);
   }, []);
 
-  const handleLogout = () => {
-    // TODO: Implement logout functionality
-    console.log("Logout clicked");
+  const handleLogout = async () => {
+    try {
+      await logout();
+      navigate("/login");
+    } catch (error) {
+      handleError(error as Error);
+    }
   };
 
-  const handleProfileUpdate = (data: {
-    firstName: string;
-    lastName: string;
-    email: string;
-  }) => {
-    const updatedProfile = {
-      id: profile.id,
-      ...data,
-    };
+  if (isProfileLoading) {
+    return <div>Loading...</div>; // Consider using a proper loading component
+  }
 
-    // TODO: Send update to backend
-    setProfile(updatedProfile);
-    setIsEditProfileOpen(false);
-  };
+  if (!profile) {
+    return null;
+  }
+
+  if (!user) {
+    return null; // Will redirect via useEffect
+  }
+
+  if (isProfileLoading || !profile) {
+    return (
+      <div className="dashboard">
+        <div className="loading-state">Loading...</div>
+      </div>
+    ); // Consider using a proper loading component
+  }
 
   return (
     <div className="dashboard">
@@ -59,7 +117,7 @@ export default function Dashboard() {
             leftIcon={<User size={18} />}
             onClick={() => setIsUserMenuOpen(!isUserMenuOpen)}
           >
-            John Doe
+            {profile.name.firstName} {profile.name.lastName}
           </Button>
 
           {isUserMenuOpen && (

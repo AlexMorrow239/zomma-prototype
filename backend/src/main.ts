@@ -63,20 +63,47 @@ function configureRequestLogging(app: any, logger: Logger) {
   logger.debug('Configuring request logging middleware');
 
   app.use((req: any, res: any, next: () => void) => {
-    logger.debug('Incoming request', {
+    // Log request
+    const requestLog = {
       method: req.method,
       url: req.url,
       headers: req.headers,
-    });
+      body: req.body,
+      query: req.query,
+    };
+    logger.debug('Incoming request', requestLog);
 
-    // Capture response headers after they're set
+    // Capture response data
     const oldEnd = res.end;
-    res.end = function (...args: any[]) {
+    const chunks: Buffer[] = [];
+
+    // Override write to capture response body chunks
+    const oldWrite = res.write;
+    res.write = function (chunk: Buffer, ...args: any[]) {
+      chunks.push(Buffer.from(chunk));
+      return oldWrite.apply(res, [chunk, ...args]);
+    };
+
+    res.end = function (chunk: Buffer, ...args: any[]) {
+      if (chunk) {
+        chunks.push(Buffer.from(chunk));
+      }
+
+      const responseBody = Buffer.concat(chunks).toString('utf8');
+      let parsedBody;
+      try {
+        parsedBody = JSON.parse(responseBody);
+      } catch {
+        parsedBody = responseBody;
+      }
+
       logger.debug('Outgoing response', {
         statusCode: res.statusCode,
         headers: res.getHeaders(),
+        body: parsedBody,
       });
-      return oldEnd.apply(res, args);
+
+      return oldEnd.apply(res, [chunk, ...args]);
     };
     next();
   });

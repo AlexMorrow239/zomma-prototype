@@ -42,7 +42,7 @@ export class UsersController {
 
   //#region Profile Management
 
-  @Get('profile')
+  @Get('/profile')
   @UseGuards(JwtAuthGuard)
   @ApiOperation({
     summary: 'Get user profile',
@@ -61,7 +61,7 @@ export class UsersController {
     return await this.usersService.getUser(user.id);
   }
 
-  @Patch('profile')
+  @Patch('/profile')
   @UseGuards(JwtAuthGuard)
   @ApiOperation({
     summary: 'Update user profile',

@@ -4,9 +4,13 @@ import { IsOptional, IsString } from 'class-validator';
 
 import { NameDto } from '../base/name.dto';
 
-export class UpdateUserDto extends NameDto {
+export class UpdateUserDto {
   @ApiPropertyOptional()
   @IsString()
   @IsOptional()
   email?: string;
+
+  @ApiPropertyOptional()
+  @IsOptional()
+  name?: NameDto;
 }

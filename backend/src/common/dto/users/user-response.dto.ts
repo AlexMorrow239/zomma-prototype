@@ -1,13 +1,24 @@
 import { ApiProperty } from '@nestjs/swagger';
 
+import { Type } from 'class-transformer';
+import { ValidateNested } from 'class-validator';
+
 import { NameDto } from '../base/name.dto';
 
-export class UserResponseDto extends NameDto {
+export class UserResponseDto {
   @ApiProperty({
     example: '550e8400-e29b-41d4-a716-446655440000',
     description: 'User unique identifier',
   })
   id: string;
+
+  @ApiProperty({
+    type: NameDto,
+    description: 'User name information',
+  })
+  @ValidateNested()
+  @Type(() => NameDto)
+  name: NameDto;
 
   @ApiProperty({
     example: 'john.doe@example.com',

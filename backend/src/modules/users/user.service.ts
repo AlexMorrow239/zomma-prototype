@@ -71,12 +71,8 @@ export class UsersService {
       isActive: true,
     });
 
-    const { password: _, name, ...rest } = newUser.toObject();
-    return {
-      ...rest,
-      firstName: name.firstName,
-      lastName: name.lastName,
-    } as UserResponseDto;
+    const { password: _, ...rest } = newUser.toObject();
+    return rest as UserResponseDto;
   }
 
   /**
@@ -89,12 +85,8 @@ export class UsersService {
       throw new NotFoundException('User not found');
     }
 
-    const { password: _, name, ...rest } = user.toObject();
-    return {
-      ...rest,
-      firstName: name.firstName,
-      lastName: name.lastName,
-    } as UserResponseDto;
+    const { password: _, ...rest } = user.toObject();
+    return rest as UserResponseDto;
   }
 
   /**
@@ -116,12 +108,8 @@ export class UsersService {
       { new: true }
     );
 
-    const { password: _, name, ...rest } = updatedUser.toObject();
-    return {
-      ...rest,
-      firstName: name.firstName,
-      lastName: name.lastName,
-    } as UserResponseDto;
+    const { password: _, ...rest } = updatedUser.toObject();
+    return rest as UserResponseDto;
   }
 
   /**
