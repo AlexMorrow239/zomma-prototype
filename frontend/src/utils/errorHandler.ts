@@ -1,3 +1,4 @@
+import * as Sentry from "@sentry/browser";
 import { AxiosError } from "axios";
 
 import { useUIStore } from "@/stores/uiStore";
@@ -73,10 +74,9 @@ export const handleError = (error: Error | AxiosError): void => {
     }
   }
 
-  // Here you could also integrate with error tracking services like Sentry
-  // if (process.env.NODE_ENV === "production") {
-  //   Sentry.captureException(error);
-  // }
+  if (process.env.NODE_ENV === "production") {
+    Sentry.captureException(error);
+  }
 };
 
 // Helper function to create a user-friendly error message from validation errors
@@ -90,7 +90,6 @@ export const formatValidationErrors = (
   return errors || "Invalid input data";
 };
 
-// Optional: Export a type-safe toast helper
 export const showErrorToast = (message: string): void => {
   const { addToast } = useUIStore.getState();
   addToast({
