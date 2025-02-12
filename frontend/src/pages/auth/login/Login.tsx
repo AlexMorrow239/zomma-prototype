@@ -1,4 +1,4 @@
-import { ReactElement, useState } from "react";
+import { ReactElement } from "react";
 
 import { Link, useNavigate } from "react-router-dom";
 
@@ -20,28 +20,23 @@ import "./Login.scss";
 
 export default function Login(): ReactElement {
   const navigate = useNavigate();
-  const [isLoading, setIsLoading] = useState(false);
   const { addToast } = useUIStore();
+  const setAuth = useAuthStore((state) => state.setAuth);
 
   // Set up mutation for login
   const loginMutation = useApiMutation<AuthResponse, LoginForm>("/auth/login", {
     onSuccess: (data) => {
-      // Set auth data on successful login
-      useAuthStore.getState().setAuth(data.user, data.token);
+      // Use the destructured setAuth instead of accessing through getState()
+      setAuth(data.user, data.token);
 
-      // Show success message
       addToast({
         type: "success",
         message: "Login successful! Welcome back.",
       });
 
-      // Redirect to dashboard
       navigate("/dashboard");
     },
-    onError: (error) => {
-      handleError(error);
-      setIsLoading(false);
-    },
+    onError: handleError, // Simplified error handling
   });
 
   const form = useForm<LoginForm>({
@@ -52,13 +47,7 @@ export default function Login(): ReactElement {
   const { handleSubmit } = form;
 
   const onSubmit = async (data: LoginForm): Promise<void> => {
-    setIsLoading(true);
-    try {
-      await loginMutation.mutateAsync(data);
-    } catch (error) {
-      // Error handling is done in onError callback
-      console.error("Login error:", error);
-    }
+    await loginMutation.mutateAsync(data);
   };
 
   return (
@@ -97,8 +86,8 @@ export default function Login(): ReactElement {
             variant="primary"
             size="md"
             fullWidth
-            isLoading={isLoading}
-            disabled={isLoading}
+            isLoading={loginMutation.isPending}
+            disabled={loginMutation.isPending}
           >
             Sign In
           </Button>

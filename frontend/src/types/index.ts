@@ -22,7 +22,10 @@ export interface AuthState {
   user: User | null;
   token: string | null;
   setAuth: (user: User | null, token: string | null) => void;
-  logout: () => void;
+  logout: (callback?: () => void) => void;
+  isAuthenticated: () => boolean;
+  updateUser: (userData: Partial<User>) => void;
+  updateToken: (newToken: string) => void;
 }
 
 export interface RegisterData {
