@@ -2,6 +2,8 @@ import { useCallback, useEffect, useState } from "react";
 
 import { useNavigate } from "react-router-dom";
 
+import { useQueryClient } from "@tanstack/react-query";
+
 import { LogOut, Settings, User, X } from "lucide-react";
 
 import { Button } from "@/components/common/button/Button";
@@ -18,6 +20,7 @@ import "./Dashboard.scss";
 
 export default function Dashboard() {
   const navigate = useNavigate();
+  const queryClient = useQueryClient();
   const { user, logout } = useAuthStore();
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
   const [isEditProfileOpen, setIsEditProfileOpen] = useState(false);
@@ -41,17 +44,18 @@ export default function Dashboard() {
   const updateProfileMutation = useApiMutation<
     UserType,
     {
-      name: {
+      name?: {
         firstName: string;
         lastName: string;
       };
-      email: string;
+      email?: string;
     }
   >("/users/profile", {
     method: "PATCH",
     onSuccess: (data) => {
       setIsEditProfileOpen(false);
-      // Optionally show a success message or update local state
+      // Invalidate the profile query to refetch the latest data
+      queryClient.invalidateQueries({ queryKey: ["/users/profile"] });
     },
     onError: (error) => {
       handleError(error);
@@ -66,7 +70,10 @@ export default function Dashboard() {
     email: string;
   }) => {
     try {
-      await updateProfileMutation.mutateAsync(data);
+      await updateProfileMutation.mutateAsync({
+        name: data.name,
+        email: data.email,
+      });
     } catch (error) {
       // Error handling is done in onError callback
       console.error("Profile update error:", error);

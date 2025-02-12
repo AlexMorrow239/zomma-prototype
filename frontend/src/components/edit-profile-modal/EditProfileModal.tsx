@@ -24,11 +24,7 @@ export function EditProfileModal({
   user,
 }: EditProfileModalProps): ReactElement {
   const form = useForm<EditProfileForm>({
-    defaultValues: {
-      firstName: user.firstName,
-      lastName: user.lastName,
-      email: user.email,
-    },
+    defaultValues: user,
     resolver: zodResolver(editProfileSchema),
   });
 
@@ -57,14 +53,14 @@ export function EditProfileModal({
         <FormField<EditProfileForm>
           formType="generic"
           label="First Name"
-          name="firstName"
+          name="name.firstName"
           form={form}
           required
         />
         <FormField<EditProfileForm>
           formType="generic"
           label="Last Name"
-          name="lastName"
+          name="name.lastName"
           form={form}
           required
         />
