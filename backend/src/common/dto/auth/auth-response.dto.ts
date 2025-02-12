@@ -3,7 +3,8 @@ import { ApiProperty } from '@nestjs/swagger';
 import { Type } from 'class-transformer';
 import { IsNotEmpty, IsString, ValidateNested } from 'class-validator';
 
-class UserLoginInfoDto {
+// Separate user info DTO for better reusability
+export class UserInfoDto {
   @ApiProperty({
     example: '507f1f77bcf86cd799439011',
     description: 'Unique identifier for the user',
@@ -15,7 +16,6 @@ class UserLoginInfoDto {
   @ApiProperty({
     example: 'user@example.com',
     description: 'User email address',
-    format: 'email',
   })
   @IsString()
   @IsNotEmpty()
@@ -38,22 +38,21 @@ class UserLoginInfoDto {
   lastName: string;
 }
 
+// Response DTO for authentication operations
 export class AuthResponseDto {
   @ApiProperty({
     example: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...',
-    description: 'JWT access token for authorization',
-    format: 'jwt',
+    description: 'JWT access token',
   })
   @IsString()
   @IsNotEmpty()
   token: string;
 
   @ApiProperty({
-    type: UserLoginInfoDto,
-    description:
-      'Basic user information returned upon successful authentication',
+    type: UserInfoDto,
+    description: 'User information',
   })
   @ValidateNested()
-  @Type(() => UserLoginInfoDto)
-  user: UserLoginInfoDto;
+  @Type(() => UserInfoDto)
+  user: UserInfoDto;
 }

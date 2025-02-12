@@ -10,9 +10,11 @@ import { InjectModel } from '@nestjs/mongoose';
 import * as bcrypt from 'bcrypt';
 import { Model } from 'mongoose';
 
+import { ChangePasswordDto } from '@/common/dto/users';
+
 import { CreateUserDto } from '../../common/dto/users/create-user.dto';
 import { UpdateUserDto } from '../../common/dto/users/update-user.dto';
-import { UserResponseDto } from '../../common/dto/users/user-response.dto';
+import { UserResponseDto } from '../../common/dto/users/user-responses.dto';
 import { User } from './schemas/user.schema';
 
 /**
@@ -71,8 +73,11 @@ export class UsersService {
       isActive: true,
     });
 
-    const { password: _, ...rest } = newUser.toObject();
-    return rest as UserResponseDto;
+    const { password: _, ...userData } = newUser.toObject();
+    return {
+      ...userData,
+      _id: userData._id.toString(),
+    } as UserResponseDto;
   }
 
   /**
@@ -85,8 +90,11 @@ export class UsersService {
       throw new NotFoundException('User not found');
     }
 
-    const { password: _, ...rest } = user.toObject();
-    return rest as UserResponseDto;
+    const { password: _, ...userData } = user.toObject();
+    return {
+      ...userData,
+      _id: userData._id.toString(),
+    } as UserResponseDto;
   }
 
   /**
@@ -108,8 +116,11 @@ export class UsersService {
       { new: true }
     );
 
-    const { password: _, ...rest } = updatedUser.toObject();
-    return rest as UserResponseDto;
+    const { password: _, ...userData } = updatedUser.toObject();
+    return {
+      ...userData,
+      _id: userData._id.toString(),
+    } as UserResponseDto;
   }
 
   /**
@@ -118,37 +129,45 @@ export class UsersService {
    * @throws UnauthorizedException if current password is incorrect
    * @throws BadRequestException if new password is same as current or invalid
    */
-  // async changeUserPassword(
-  //   userId: string,
-  //   currentPassword: string,
-  //   newPassword: string
-  // ): Promise<void> {
-  //   const user = await this.userModel.findById(userId);
-  //   if (!user) {
-  //     throw new NotFoundException('User not found');
-  //   }
+  /**
+   * Changes a user's password.
+   * @throws NotFoundException if user not found
+   * @throws UnauthorizedException if current password is incorrect
+   * @throws BadRequestException if new password is same as current or invalid
+   */
+  async changeUserPassword(
+    userId: string,
+    changePasswordDto: ChangePasswordDto
+  ): Promise<void> {
+    const user = await this.userModel.findById(userId);
+    if (!user) {
+      throw new NotFoundException('User not found');
+    }
 
-  //   const isPasswordValid = await bcrypt.compare(
-  //     currentPassword,
-  //     user.password
-  //   );
-  //   if (!isPasswordValid) {
-  //     throw new UnauthorizedException('Current password is incorrect');
-  //   }
+    const isPasswordValid = await bcrypt.compare(
+      changePasswordDto.currentPassword,
+      user.password
+    );
+    if (!isPasswordValid) {
+      throw new UnauthorizedException('Current password is incorrect');
+    }
 
-  //   const isSamePassword = await bcrypt.compare(newPassword, user.password);
-  //   if (isSamePassword) {
-  //     throw new BadRequestException(
-  //       'New password must be different from current password'
-  //     );
-  //   }
+    const isSamePassword = await bcrypt.compare(
+      changePasswordDto.newPassword,
+      user.password
+    );
+    if (isSamePassword) {
+      throw new BadRequestException(
+        'New password must be different from current password'
+      );
+    }
 
-  //   // Validate password strength
-  //   this.validatePassword(newPassword);
+    // Validate password strength
+    this.validatePassword(changePasswordDto.newPassword);
 
-  //   const hashedPassword = await bcrypt.hash(newPassword, 10);
-  //   await this.userModel.findByIdAndUpdate(userId, {
-  //     password: hashedPassword,
-  //   });
-  // }
+    const hashedPassword = await bcrypt.hash(changePasswordDto.newPassword, 10);
+    await this.userModel.findByIdAndUpdate(userId, {
+      password: hashedPassword,
+    });
+  }
 }

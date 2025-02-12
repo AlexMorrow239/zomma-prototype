@@ -1,19 +1,12 @@
 import { Body, Controller, HttpCode, HttpStatus, Post } from '@nestjs/common';
 import { ApiBody, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 
+import { LoginRequestDto } from '@/common/dto/auth/auth-requests.dto';
 import { AuthResponseDto } from '@/common/dto/auth/auth-response.dto';
-import { LoginDto } from '@/common/dto/auth/login.dto';
 import { CreateUserDto } from '@/common/dto/users';
 
 import { AuthService } from './auth.service';
 
-/**
- * Controller handling all authentication-related HTTP endpoints.
- * Provides functionality for:
- * - User registration
- * - Login and authentication
- * - Password management (forgot/reset)
- */
 @ApiTags('Authentication')
 @Controller('auth')
 export class AuthController {
@@ -81,7 +74,7 @@ export class AuthController {
     description: 'Authenticates a user and returns a JWT token',
   })
   @ApiBody({
-    type: LoginDto,
+    type: LoginRequestDto,
     description: 'User login credentials',
     examples: {
       validLogin: {
@@ -102,8 +95,8 @@ export class AuthController {
     status: 401,
     description: 'Unauthorized - Invalid credentials',
   })
-  async login(@Body() loginDto: LoginDto): Promise<AuthResponseDto> {
-    return await this.authService.login(loginDto.email, loginDto.password);
+  async login(@Body() loginDto: LoginRequestDto): Promise<AuthResponseDto> {
+    return await this.authService.login(loginDto);
   }
 
   // @Post('forgot-password')
