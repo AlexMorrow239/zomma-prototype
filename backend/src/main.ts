@@ -52,6 +52,8 @@ function configureGlobalMiddleware(app: any, logger: Logger) {
   app.useGlobalPipes(
     new ValidationPipe({
       transform: true,
+      whitelist: true,
+      forbidNonWhitelisted: true,
       transformOptions: { enableImplicitConversion: true },
     })
   );

@@ -15,6 +15,7 @@ import { AppService } from './app.service';
 import { configValidationSchema } from './config/config.schema';
 import * as config from './config/configuration';
 import { AuthModule } from './modules/auth/auth.module';
+import { ProspectModule } from './modules/prospect/prospect.module';
 import { UsersModule } from './modules/users/user.module';
 
 @Module({
@@ -53,6 +54,7 @@ import { UsersModule } from './modules/users/user.module';
     // Feature modules
     AuthModule,
     UsersModule,
+    ProspectModule,
   ],
   controllers: [AppController],
   providers: [AppService],
