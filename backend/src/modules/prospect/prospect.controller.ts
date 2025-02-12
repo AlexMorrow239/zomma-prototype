@@ -75,7 +75,54 @@ export class ProspectController {
       },
     },
   })
+  @ApiResponse({
+    status: 201,
+    description: 'Prospect successfully created',
+    type: ProspectResponseDto,
+  })
+  @ApiBody({
+    type: CreateProspectDto,
+    examples: {
+      example1: {
+        summary: 'New Prospect Example',
+        value: {
+          contact: {
+            name: {
+              firstName: 'John',
+              lastName: 'Doe',
+            },
+            email: 'john.doe@example.com',
+            phone: '+1234567890',
+            preferredContact: 'email',
+          },
+          goals: {
+            financialGoals:
+              'Targeting 25% revenue growth in the next fiscal year',
+            challenges:
+              'Current market penetration is limited and facing strong competition',
+          },
+          services: {
+            selectedServices: [
+              'websiteDevelopment',
+              'digitalMarketing',
+              'consultingStrategy',
+            ],
+          },
+          budget: {
+            budgetRange: '10k-25k',
+          },
+          status: 'pending',
+          notes:
+            'Interested in our enterprise solution, particularly focused on web development and digital marketing services.',
+        },
+      },
+    },
+  })
   async create(@Body() createProspectDto: CreateProspectDto) {
+    console.log(
+      'Received prospect data:',
+      JSON.stringify(createProspectDto, null, 2)
+    );
     console.log(
       'Received prospect data:',
       JSON.stringify(createProspectDto, null, 2)
@@ -87,6 +134,11 @@ export class ProspectController {
   @UseGuards(JwtAuthGuard)
   @ApiBearerAuth()
   @ApiOperation({ summary: 'Get all prospects' })
+  @ApiResponse({
+    status: 200,
+    description: 'Returns all prospects',
+    type: [ProspectResponseDto],
+  })
   @ApiResponse({
     status: 200,
     description: 'Returns all prospects',
@@ -155,6 +207,24 @@ export class ProspectController {
   @UseGuards(JwtAuthGuard)
   @ApiBearerAuth()
   @ApiOperation({ summary: 'Delete a prospect' })
+  @ApiParam({
+    name: 'id',
+    example: '65f1a3c3e2c1234567890abc',
+    description: 'Prospect ID',
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'Prospect successfully deleted',
+    schema: {
+      type: 'object',
+      properties: {
+        message: {
+          type: 'string',
+          example: 'Prospect 123 has been successfully deleted',
+        },
+      },
+    },
+  })
   @ApiParam({
     name: 'id',
     example: '65f1a3c3e2c1234567890abc',
