@@ -1,45 +1,31 @@
-import type { HTMLAttributes } from "react";
-
-import classNames from "classnames";
+import type React from "react";
 
 import "./Loader.scss";
 
-interface LoaderProps extends HTMLAttributes<HTMLDivElement> {
-  /** Size of the loader in pixels (default: 24) */
-  size?: number;
-  /** Custom CSS class name */
-  className?: string;
-  /** Center the loader in its container */
-  center?: boolean;
-  /** Optional message to display below the loader */
-  message?: string;
+interface LoaderProps {
+  isLoading: boolean;
+  color?: string;
 }
 
-export function Loader({
-  size = 24,
-  className,
-  center = false,
-  message,
-  ...props
-}: LoaderProps): JSX.Element {
+const Loader: React.FC<LoaderProps> = ({ isLoading, color = "#003366" }) => {
+  const letters = "ZOMMA".split("");
+
   return (
-    <div
-      className={classNames("loaderContainer", className, {
-        center: center,
-      })}
-      {...props}
-    >
-      <div className="loader__content">
-        <div
-          className="loader"
+    <div className={`zomma-loader ${isLoading ? "visible" : ""}`}>
+      {letters.map((letter, index) => (
+        <span
+          key={index}
+          className="zomma-letter"
           style={{
-            width: size,
-            height: size,
-            borderWidth: Math.max(2, size / 8),
+            animationDelay: `${index * 0.1}s`,
+            color: color,
           }}
-        />
-        {message && <h2 className="loader__message">{message}</h2>}
-      </div>
+        >
+          {letter}
+        </span>
+      ))}
     </div>
   );
-}
+};
+
+export default Loader;

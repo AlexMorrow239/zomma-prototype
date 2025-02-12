@@ -1,36 +1,30 @@
-@use "../../../styles/abstracts/index" as *;
-
-.loaderContainer {
+.zomma-loader {
   @include flex-center;
-  display: inline-flex;
+  opacity: 0;
+  transition: var(--transition-opacity);
+  font-family: var(--font-primary);
+  font-weight: var(--font-weight-bold);
+  font-size: var(--font-size-2xl);
+  letter-spacing: 2px;
 
-  &.center {
-    @include center-absolute;
+  &.visible {
+    opacity: 1;
+  }
+
+  .zomma-letter {
+    display: inline-block;
+    animation: pulse 1.5s infinite ease-in-out;
   }
 }
 
-.loader {
-  border-radius: var(--radius-full);
-  border-style: solid;
-  border-color: var(--color-border);
-  border-top-color: var(--color-primary);
-  animation: spin 1s linear infinite;
-
-  &__content {
-    @include flex-center;
-    flex-direction: column;
-    gap: var(--spacing-4);
+@keyframes pulse {
+  0%,
+  100% {
+    transform: scale(1);
+    opacity: 1;
   }
-
-  &__message {
-    color: var(--color-text-light);
-    font-weight: var(--font-weight-medium);
-    text-align: center;
-  }
-}
-
-@keyframes spin {
-  to {
-    transform: rotate(360deg);
+  50% {
+    transform: scale(0.9);
+    opacity: 0.5;
   }
 }
