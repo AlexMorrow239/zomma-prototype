@@ -2,6 +2,9 @@ import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 
 import { Document } from 'mongoose';
 
+import { BaseSchema } from '@/common/schemas/base.schema';
+import { Name } from '@/common/schemas/name.schema';
+
 /**
  * User schema representing authenticated users of the system.
  *
@@ -11,12 +14,9 @@ import { Document } from 'mongoose';
  * - Account status management
  * - Password reset functionality
  *
- * Security considerations:
- * - Passwords are hashed before storage
- * - Reset tokens have expiration dates
  */
 @Schema({ timestamps: true })
-export class User extends Document {
+export class User extends BaseSchema {
   /**
    * User's email address.
    * Used as the unique identifier for authentication.
@@ -24,6 +24,13 @@ export class User extends Document {
   @Prop({
     required: true,
     unique: true,
+    lowercase: true,
+    trim: true,
+    maxlength: 255,
+    match: [
+      /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/,
+      'Please provide a valid email address',
+    ],
   })
   email: string;
 
@@ -32,7 +39,11 @@ export class User extends Document {
    * Never stored in plain text.
    * Hashing is handled by the service layer.
    */
-  @Prop({ required: true })
+  @Prop({
+    required: true,
+    minlength: 6,
+    select: false, // Don't include password in default queries
+  })
   password: string;
 
   /**
@@ -41,39 +52,17 @@ export class User extends Document {
    * for proper sorting and display.
    */
   @Prop({
-    type: {
-      firstName: { type: String, required: true },
-      lastName: { type: String, required: true },
-    },
     required: true,
+    type: Name,
   })
-  name: {
-    firstName: string;
-    lastName: string;
-  };
+  name: Name;
 
-  /**
-   * Token for password reset functionality.
-   * Only present when a reset is in progress.
-   * Cleared after successful reset.
-   */
-  @Prop()
-  resetPasswordToken?: string;
-
-  /**
-   * Expiration timestamp for password reset token.
-   * Ensures reset links cannot be used indefinitely.
-   */
-  @Prop()
-  resetPasswordExpires?: Date;
-
-  /**
-   * Automatically managed timestamps.
-   * Added by the timestamps: true schema option.
-   */
-  createdAt: Date;
-  updatedAt: Date;
+  // Inherited from BaseSchema:
+  // createdAt: Date;
+  // updatedAt: Date;
 }
+
+export type UserDocument = User & Document;
 
 /**
  * Generated Mongoose schema for the User class.
@@ -81,3 +70,12 @@ export class User extends Document {
  * Automatically adds createdAt and updatedAt fields.
  */
 export const UserSchema = SchemaFactory.createForClass(User);
+
+// Add indexes for common queries
+UserSchema.index({ email: 1 });
+UserSchema.index({ 'name.lastName': 1, 'name.firstName': 1 });
+
+// for full name
+UserSchema.virtual('fullName').get(function () {
+  return `${this.name.firstName} ${this.name.lastName}`;
+});

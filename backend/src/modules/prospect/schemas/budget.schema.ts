@@ -1,10 +1,13 @@
 import { Prop, Schema } from '@nestjs/mongoose';
 
+import { BudgetRange } from '@/common/enums';
+
 @Schema({ _id: false })
 export class Budget {
   @Prop({
     required: true,
-    enum: ['below5k', '5k-10k', '10k-25k', '25k-50k', 'above50k'],
+    enum: Object.values(BudgetRange),
+    type: String,
   })
-  budgetRange: string;
+  budgetRange: BudgetRange;
 }
