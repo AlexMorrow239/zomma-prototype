@@ -8,6 +8,7 @@ import {
 import axios, { AxiosError, type AxiosRequestConfig } from "axios";
 
 import { useAuthStore } from "@/stores/authStore";
+import { useLoadingStore } from "@/stores/loadingStore";
 
 // Create axios instance
 const axiosInstance = axios.create({
@@ -77,12 +78,34 @@ export function useApiQuery<T>(
     "queryKey" | "queryFn"
   > & {
     axiosConfig?: AxiosRequestConfig;
+    useGlobalLoader?: boolean;
   }
 ) {
-  const { axiosConfig, ...queryOptions } = options || {};
+  const {
+    axiosConfig,
+    useGlobalLoader = true,
+    ...queryOptions
+  } = options || {};
+  const setLoading = useLoadingStore((state) => state.setLoading);
+
+  // wrapped queryFn that handles loading state
+  const wrappedQueryFn = async () => {
+    if (useGlobalLoader) {
+      setLoading(true);
+    }
+    try {
+      const result = await fetchApi<T>(endpoint, axiosConfig);
+      return result;
+    } finally {
+      if (useGlobalLoader) {
+        setLoading(false);
+      }
+    }
+  };
+
   return useQuery<T, AxiosError, T, readonly [string]>({
     queryKey: [endpoint],
-    queryFn: () => fetchApi<T>(endpoint, axiosConfig),
+    queryFn: wrappedQueryFn,
     ...queryOptions,
   });
 }
@@ -92,9 +115,16 @@ export function useApiMutation<TData, TVariables>(
   options?: Omit<UseMutationOptions<TData, Error, TVariables>, "mutationFn"> & {
     method?: "POST" | "PUT" | "PATCH" | "DELETE";
     axiosConfig?: Omit<AxiosRequestConfig, "method" | "data">;
+    useGlobalLoader?: boolean;
   }
 ) {
-  const { method = "POST", axiosConfig, ...mutationOptions } = options || {};
+  const {
+    method = "POST",
+    axiosConfig,
+    useGlobalLoader = true,
+    ...mutationOptions
+  } = options || {};
+  const setLoading = useLoadingStore((state) => state.setLoading);
 
   return useMutation<TData, Error, TVariables>({
     mutationFn: (variables) =>
@@ -104,5 +134,17 @@ export function useApiMutation<TData, TVariables>(
         ...axiosConfig,
       }),
     ...mutationOptions,
+    onSettled: (data, error, variables, context) => {
+      if (useGlobalLoader) {
+        setLoading(false);
+      }
+      mutationOptions?.onSettled?.(data, error, variables, context);
+    },
+    onMutate: (variables) => {
+      if (useGlobalLoader) {
+        setLoading(true);
+      }
+      mutationOptions?.onMutate?.(variables);
+    },
   });
 }

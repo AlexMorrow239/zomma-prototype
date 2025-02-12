@@ -7,12 +7,16 @@ import { useQueryClient } from "@tanstack/react-query";
 import { LogOut, Settings, User, X } from "lucide-react";
 
 import { Button } from "@/components/common/button/Button";
+import Loader from "@/components/common/loader/Loader";
 import { EditProfileModal } from "@/components/edit-profile-modal/EditProfileModal";
 import { ProspectDetails } from "@/components/prospect-details/ProspectDetails";
+import { ProspectsList } from "@/components/prospects-list/ProspectsList";
 
 import { mockProspects } from "@/assets/mocks";
 import { useApiMutation, useApiQuery } from "@/hooks/useApi";
 import { useAuthStore } from "@/stores/authStore";
+import { useLoadingStore } from "@/stores/loadingStore";
+import { useUIStore } from "@/stores/uiStore";
 import type { User as UserType } from "@/types";
 import { handleError } from "@/utils/errorHandler";
 
@@ -21,11 +25,17 @@ import "./Dashboard.scss";
 export default function Dashboard() {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
-  const { user, logout } = useAuthStore();
+  const { addToast } = useUIStore();
+
+  // Auth store selectors
+  const { user, logout, updateUser: storeUpdateUser } = useAuthStore();
+
+  const [selectedProspect, setSelectedProspect] = useState(mockProspects[0]);
+  const isLoading = useLoadingStore((state) => state.isLoading);
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
   const [isEditProfileOpen, setIsEditProfileOpen] = useState(false);
-  const [selectedProspect, setSelectedProspect] = useState(mockProspects[0]);
 
+  // Profile query
   const { data: profile, isLoading: isProfileLoading } = useApiQuery<UserType>(
     "/users/profile",
     {
@@ -35,12 +45,15 @@ export default function Dashboard() {
     }
   );
 
+  // Auth redirect
   useEffect(() => {
-    if (!user) {
+    const isAuthenticated = useAuthStore.getState().isAuthenticated();
+    if (!isAuthenticated) {
       navigate("/login");
     }
-  }, [user, navigate]);
+  }, [navigate]);
 
+  // Profile update mutation
   const updateProfileMutation = useApiMutation<
     UserType,
     {
@@ -54,12 +67,14 @@ export default function Dashboard() {
     method: "PATCH",
     onSuccess: (data) => {
       setIsEditProfileOpen(false);
-      // Invalidate the profile query to refetch the latest data
+      storeUpdateUser(data); // Update user in store
       queryClient.invalidateQueries({ queryKey: ["/users/profile"] });
+      addToast({
+        type: "success",
+        message: "Profile updated successfully",
+      });
     },
-    onError: (error) => {
-      handleError(error);
-    },
+    onError: handleError,
   });
 
   const handleProfileUpdate = async (data: {
@@ -69,52 +84,48 @@ export default function Dashboard() {
     };
     email: string;
   }) => {
-    try {
-      await updateProfileMutation.mutateAsync({
-        name: data.name,
-        email: data.email,
-      });
-    } catch (error) {
-      // Error handling is done in onError callback
-      console.error("Profile update error:", error);
-    }
+    await updateProfileMutation.mutateAsync({
+      name: data.name,
+      email: data.email,
+    });
   };
 
   const closeMenu = useCallback(() => {
     setIsUserMenuOpen(false);
-  }, []);
+  }, [setIsUserMenuOpen]);
 
   const handleLogout = async () => {
     try {
-      await logout();
-      navigate("/login");
+      await logout(() => {
+        addToast({
+          type: "success",
+          message: "Logged out successfully",
+        });
+        navigate("/login");
+      });
     } catch (error) {
       handleError(error as Error);
     }
   };
 
-  if (isProfileLoading) {
-    return <div>Loading...</div>; // Consider using a proper loading component
-  }
-
-  if (!profile) {
+  // Loading states
+  if (!profile || !user) {
     return null;
   }
 
-  if (!user) {
-    return null; // Will redirect via useEffect
-  }
-
-  if (isProfileLoading || !profile) {
+  if (isProfileLoading) {
     return (
       <div className="dashboard">
-        <div className="loading-state">Loading...</div>
+        <div className="loading-state">
+          <Loader isLoading={true} />
+        </div>
       </div>
-    ); // Consider using a proper loading component
+    );
   }
 
   return (
     <div className="dashboard">
+      <Loader isLoading={isLoading} />
       <header className="dashboard-header">
         <h1>Prospect Details</h1>
         <div className="user-menu">
@@ -161,34 +172,20 @@ export default function Dashboard() {
           )}
         </div>
       </header>
+
       <main className="dashboard-content">
         <div className="prospects-container">
-          <div className="prospects-list">
-            {mockProspects.map((prospect) => (
-              <div
-                key={prospect.id}
-                className={`prospect-item ${
-                  selectedProspect.id === prospect.id ? "selected" : ""
-                }`}
-                onClick={() => setSelectedProspect(prospect)}
-              >
-                <h3>{prospect.contact.businessName}</h3>
-                <p>
-                  {prospect.contact.firstName} {prospect.contact.lastName}
-                </p>
-                <span
-                  className={`status ${prospect.contacted ? "contacted" : "new"}`}
-                >
-                  {prospect.contacted ? "Contacted" : "New"}
-                </span>
-              </div>
-            ))}
-          </div>
+          <ProspectsList
+            prospects={mockProspects}
+            selectedProspect={selectedProspect}
+            onSelectProspect={setSelectedProspect}
+          />
           <div className="prospect-details">
             <ProspectDetails prospect={selectedProspect} />
           </div>
         </div>
       </main>
+
       <EditProfileModal
         isOpen={isEditProfileOpen}
         onClose={() => setIsEditProfileOpen(false)}
