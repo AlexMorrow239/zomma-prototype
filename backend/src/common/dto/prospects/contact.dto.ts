@@ -5,16 +5,14 @@ import {
   IsString,
   Length,
   Matches,
+  ValidateNested,
 } from 'class-validator';
 
-export class ContactDto {
-  @IsString()
-  @Length(2, 50)
-  firstName: string;
+import { NameDto } from '../base/name.dto';
 
-  @IsString()
-  @Length(2, 50)
-  lastName: string;
+export class ContactDto {
+  @ValidateNested()
+  name: NameDto;
 
   @IsEmail()
   email: string;

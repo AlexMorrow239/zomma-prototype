@@ -1,6 +1,8 @@
 import {
+  BadRequestException,
   ForbiddenException,
   Injectable,
+  InternalServerErrorException,
   NotFoundException,
 } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
@@ -22,11 +24,28 @@ export class ProspectService {
   async create(
     createProspectDto: CreateProspectDto
   ): Promise<ProspectDocument> {
-    const createdProspect = new this.prospectModel({
-      ...createProspectDto,
-      status: 'pending', // Set default status
-    });
-    return createdProspect.save();
+    try {
+      // Validate required nested fields
+      if (
+        !createProspectDto.contact?.name.firstName ||
+        !createProspectDto.contact?.name.lastName
+      ) {
+        throw new BadRequestException('First name and last name are required');
+      }
+
+      const createdProspect = new this.prospectModel(createProspectDto);
+      return await createdProspect.save();
+    } catch (error) {
+      if (error instanceof BadRequestException) {
+        throw error;
+      }
+
+      if (error.name === 'ValidationError') {
+        throw new BadRequestException(error.message);
+      }
+
+      throw new InternalServerErrorException('Error creating prospect');
+    }
   }
 
   async findAll(): Promise<ProspectDocument[]> {

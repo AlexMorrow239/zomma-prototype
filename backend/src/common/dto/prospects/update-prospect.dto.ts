@@ -2,12 +2,9 @@ import { ApiProperty, PartialType } from '@nestjs/swagger';
 
 import { IsEnum, IsOptional, IsString, Length } from 'class-validator';
 
-import { CreateProspectDto } from './create-prospect.dto';
+import { ProspectStatus } from '@/common/enums';
 
-export enum ProspectStatus {
-  PENDING = 'pending',
-  CONTACTED = 'contacted',
-}
+import { CreateProspectDto } from './create-prospect.dto';
 
 export class UpdateProspectDto extends PartialType(CreateProspectDto) {
   @ApiProperty({
@@ -17,8 +14,7 @@ export class UpdateProspectDto extends PartialType(CreateProspectDto) {
     example: ProspectStatus.PENDING,
   })
   @IsEnum(ProspectStatus, {
-    message:
-      'Status must be one of: pending, contacted, qualified, converted, rejected',
+    message: 'Status must be one of: pending, contacted',
   })
   @IsOptional()
   status?: ProspectStatus;
