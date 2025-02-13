@@ -13,13 +13,15 @@ export function ProspectsList({ prospects }: ProspectsListProps) {
   return (
     <div className="prospects-list">
       {prospects.length === 0 ? (
-        <div className="no-prospects">No prospects found</div>
+        <div key="no-prospects" className="no-prospects">
+          No prospects found
+        </div>
       ) : (
         prospects.map((prospect) => (
           <div
-            key={prospect.id}
+            key={prospect._id}
             className={`prospect-item ${
-              selectedProspect?.id === prospect.id ? "selected" : ""
+              selectedProspect?._id === prospect._id ? "selected" : ""
             }`}
             onClick={() => setSelectedProspect(prospect)}
           >
@@ -29,9 +31,19 @@ export function ProspectsList({ prospects }: ProspectsListProps) {
             </h3>
             <p>{prospect.contact.email}</p>
             <span
-              className={`status ${prospect.status === "contacted" ? "contacted" : "new"}`}
+              className={`status ${
+                (selectedProspect?._id === prospect._id
+                  ? selectedProspect.status
+                  : prospect.status) === "contacted"
+                  ? "contacted"
+                  : "new"
+              }`}
             >
-              {prospect.status === "contacted" ? "Contacted" : "New"}
+              {(selectedProspect?._id === prospect._id
+                ? selectedProspect.status
+                : prospect.status) === "contacted"
+                ? "Contacted"
+                : "Not Contacted"}
             </span>
           </div>
         ))

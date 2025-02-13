@@ -8,6 +8,7 @@ interface ProspectState {
   setSelectedProspect: (prospect: Prospect | null) => void;
   setProspects: (prospects: Prospect[]) => void;
   updateProspect: (updatedProspect: Prospect) => void;
+  removeProspect: (id: string) => void;
 }
 
 export const useProspectStore = create<ProspectState>((set) => ({
@@ -20,5 +21,9 @@ export const useProspectStore = create<ProspectState>((set) => ({
       prospects: state.prospects.map((prospect) =>
         prospect._id === updatedProspect._id ? updatedProspect : prospect
       ),
+    })),
+  removeProspect: (id) =>
+    set((state) => ({
+      prospects: state.prospects.filter((prospect) => prospect._id !== id),
     })),
 }));

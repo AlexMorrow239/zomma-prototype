@@ -45,9 +45,11 @@ export default function Dashboard() {
   );
 
   // Prospects query
-  const { data: prospects = [], isLoading: isProspectsLoading } = useApiQuery<
-    Prospect[]
-  >("/prospects", {
+  const {
+    data: prospects = [],
+    isLoading: isProspectsLoading,
+    refetch: refetchProspects,
+  } = useApiQuery<Prospect[]>("/prospects", {
     useGlobalLoader: false,
     staleTime: 30000,
   });
@@ -57,7 +59,16 @@ export default function Dashboard() {
     if (prospects.length > 0 && !selectedProspect) {
       setSelectedProspect(prospects[0]);
     }
-  }, [prospects, selectedProspect, setSelectedProspect]);
+  }, [prospects]);
+
+  // handle prospect deletion
+  const handleProspectDeleted = useCallback(async () => {
+    await refetchProspects();
+    // If there are remaining prospects, select the first one
+    if (prospects.length > 0) {
+      setSelectedProspect(prospects[0]);
+    }
+  }, [refetchProspects, prospects, setSelectedProspect]);
 
   // Auth redirect
   useEffect(() => {
@@ -186,7 +197,7 @@ export default function Dashboard() {
           <ProspectsList prospects={prospects} />
           <div className="prospect-details">
             {selectedProspect ? (
-              <ProspectDetails />
+              <ProspectDetails onProspectDeleted={handleProspectDeleted} />
             ) : (
               <div className="no-selection">
                 Select a prospect to view details

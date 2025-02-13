@@ -6,9 +6,17 @@ import { Prospect } from "@/types";
 
 import "./ProspectDetails.scss";
 
-export function ProspectDetails() {
-  const { selectedProspect, setSelectedProspect, updateProspect } =
-    useProspectStore();
+interface ProspectDetailsProps {
+  onProspectDeleted?: () => Promise<void>;
+}
+
+export function ProspectDetails({ onProspectDeleted }: ProspectDetailsProps) {
+  const {
+    selectedProspect,
+    setSelectedProspect,
+    updateProspect,
+    removeProspect,
+  } = useProspectStore();
 
   const updateStatusMutation = useApiMutation<Prospect, { status: string }>(
     `/prospects/${(selectedProspect as NonNullable<typeof selectedProspect>)._id}`,
@@ -21,9 +29,17 @@ export function ProspectDetails() {
     }
   );
 
-  const handleMarkContacted = () => {
-    updateStatusMutation.mutate({ status: "contacted" });
-  };
+  const deleteProspectMutation = useApiMutation<{ message: string }, void>(
+    `/prospects/${(selectedProspect as NonNullable<typeof selectedProspect>)._id}`,
+    {
+      method: "DELETE",
+      onSuccess: async () => {
+        removeProspect(selectedProspect!._id);
+        setSelectedProspect(null);
+        await onProspectDeleted?.();
+      },
+    }
+  );
 
   const getBudgetRangeLabel = (value: string): string => {
     const budgetRanges: Record<string, string> = {
@@ -38,25 +54,47 @@ export function ProspectDetails() {
 
   if (!selectedProspect) return null;
 
+  const handleStatusToggle = () => {
+    const newStatus =
+      selectedProspect.status === "contacted" ? "pending" : "contacted";
+    updateStatusMutation.mutate({ status: newStatus });
+  };
+
   return (
     <div className="prospect-details">
       <div className="prospect-header">
         <div className="contact-status">
           <span
-            className={`status-indicator ${selectedProspect.contacted ? "contacted" : "not-contacted"}`}
+            className={`status-indicator ${
+              selectedProspect.status === "contacted"
+                ? "contacted"
+                : "not-contacted"
+            }`}
           >
-            {selectedProspect.contacted ? "Contacted" : "Not Contacted"}
+            {selectedProspect.status === "contacted"
+              ? "Contacted"
+              : "Not Contacted"}
           </span>
 
-          {!selectedProspect.contacted && (
+          <div className="actions">
             <Button
               variant="primary"
-              onClick={handleMarkContacted}
+              onClick={handleStatusToggle}
               isLoading={updateStatusMutation.isPending}
             >
-              Mark as Contacted
+              {selectedProspect.status === "contacted"
+                ? "Mark as Not Contacted"
+                : "Mark as Contacted"}
             </Button>
-          )}
+
+            <Button
+              variant="outline"
+              onClick={() => deleteProspectMutation.mutate()}
+              isLoading={deleteProspectMutation.isPending}
+            >
+              Delete Prospect
+            </Button>
+          </div>
         </div>
       </div>
 

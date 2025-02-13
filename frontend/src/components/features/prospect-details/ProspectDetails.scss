@@ -8,28 +8,38 @@
 
   .prospect-header {
     margin-bottom: var(--spacing-6);
+    padding-bottom: var(--spacing-4);
+    border-bottom: 1px solid var(--color-border);
 
     .contact-status {
       display: flex;
       align-items: center;
       gap: var(--spacing-4);
+      flex-wrap: wrap;
+      justify-content: space-between;
+      width: 100%;
 
       .status-indicator {
         display: inline-flex;
         align-items: center;
-        padding: var(--spacing-1) var(--spacing-3);
+        padding: var(--spacing-2) var(--spacing-4);
         border-radius: var(--radius-full);
         font-size: var(--font-size-sm);
         font-weight: var(--font-weight-medium);
+        min-width: 120px;
+        justify-content: center;
+        flex-shrink: 0;
 
         &.contacted {
           background-color: var(--color-success-light);
           color: var(--color-success-dark);
+          border: 1px solid var(--color-success);
         }
 
         &.not-contacted {
           background-color: var(--color-warning-light);
           color: var(--color-warning-dark);
+          border: 1px solid var(--color-warning);
         }
 
         &::before {
@@ -39,6 +49,7 @@
           height: 8px;
           border-radius: 50%;
           margin-right: var(--spacing-2);
+          box-shadow: 0 0 0 2px var(--color-background);
         }
 
         &.contacted::before {
@@ -47,6 +58,29 @@
 
         &.not-contacted::before {
           background-color: var(--color-warning);
+        }
+      }
+    }
+
+    .actions {
+      display: flex;
+      gap: var(--spacing-3);
+      align-items: center;
+      flex-wrap: nowrap;
+
+      button {
+        min-width: 140px;
+        white-space: nowrap;
+
+        &[variant="danger"] {
+          background-color: var(--color-error-light);
+          color: var(--color-error);
+          border: 1px solid var(--color-error);
+
+          &:hover {
+            background-color: var(--color-error);
+            color: var(--color-white);
+          }
         }
       }
     }
@@ -113,6 +147,30 @@
         border-radius: var(--radius-full);
         font-size: var(--font-size-sm);
         font-weight: var(--font-weight-medium);
+      }
+    }
+  }
+
+  @include respond-to("sm") {
+    .prospect-header {
+      .contact-status {
+        gap: var(--spacing-2);
+
+        .status-indicator {
+          font-size: var(--font-size-xs);
+          min-width: auto;
+          padding: var(--spacing-1) var(--spacing-2);
+        }
+
+        .actions {
+          gap: var(--spacing-2);
+
+          button {
+            min-width: auto;
+            padding: var(--spacing-1) var(--spacing-2);
+            font-size: var(--font-size-xs);
+          }
+        }
       }
     }
   }
