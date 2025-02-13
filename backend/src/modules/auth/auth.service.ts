@@ -1,5 +1,10 @@
 import * as crypto from 'crypto';
-import { Injectable, UnauthorizedException } from '@nestjs/common';
+import {
+  BadRequestException,
+  ConflictException,
+  Injectable,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
 import { InjectModel } from '@nestjs/mongoose';
@@ -8,18 +13,14 @@ import * as bcrypt from 'bcrypt';
 import { Model } from 'mongoose';
 
 import {
-  ForgotPasswordRequestDto,
-  LoginRequestDto,
-  ResetPasswordRequestDto,
-} from '@/common/dto/auth/auth-requests.dto';
-import {
   AuthResponseDto,
+  CreateUserDto,
+  LoginRequestDto,
   UserInfoDto,
-} from '@/common/dto/auth/auth-response.dto';
-import { CreateUserDto } from '@/common/dto/users';
+} from '@/common/dto';
 
-import { User } from '../users/schemas/user.schema';
-import { UsersService } from '../users/user.service';
+import { User } from '../user/schemas/user.schema';
+import { UsersService } from '../user/user.service';
 
 @Injectable()
 export class AuthService {
@@ -30,11 +31,53 @@ export class AuthService {
     private readonly configService: ConfigService
   ) {}
 
+  /**
+   * Validates password strength requirements
+   * @throws BadRequestException if password doesn't meet requirements
+   */
+  private validatePassword(password: string): void {
+    const hasUpperCase = /[A-Z]/.test(password);
+    const hasLowerCase = /[a-z]/.test(password);
+    const hasNumbers = /[0-9]/.test(password);
+    const hasSpecialChar = /[^A-Za-z0-9]/.test(password);
+    const isLongEnough = password.length >= 8;
+
+    const errors: string[] = [];
+
+    if (!isLongEnough) errors.push('be at least 8 characters long');
+    if (!hasUpperCase) errors.push('contain at least one uppercase letter');
+    if (!hasLowerCase) errors.push('contain at least one lowercase letter');
+    if (!hasNumbers) errors.push('contain at least one number');
+    if (!hasSpecialChar) errors.push('contain at least one special character');
+
+    if (errors.length > 0) {
+      throw new BadRequestException(`Password must ${errors.join(', ')}`);
+    }
+  }
+
   async register(createUserDto: CreateUserDto): Promise<AuthResponseDto> {
-    await this.usersService.createUser(createUserDto);
-    const user = await this.userModel.findOne({
-      email: createUserDto.email,
+    // Check for existing user with case-insensitive email
+    const existingUser = await this.userModel.findOne({
+      email: { $regex: new RegExp(`^${createUserDto.email}$`, 'i') },
     });
+
+    if (existingUser) {
+      throw new ConflictException('An account with this email already exists');
+    }
+
+    // Validate password strength
+    this.validatePassword(createUserDto.password);
+
+    // Hash password
+    const hashedPassword = await bcrypt.hash(createUserDto.password, 10);
+
+    // Create and save user
+    const user = await this.userModel.create({
+      email: createUserDto.email.toLowerCase(),
+      password: hashedPassword,
+      name: createUserDto.name,
+    });
+
     return await this.generateAuthResponse(user);
   }
 
@@ -75,55 +118,5 @@ export class AuthService {
       token,
       user: userInfo,
     };
-  }
-
-  private generateResetToken(): string {
-    return crypto.randomBytes(32).toString('hex');
-  }
-
-  async forgotPassword(email: string): Promise<void> {
-    const user = await this.userModel.findOne({ email });
-    if (!user) {
-      // Return void even if user not found to prevent email enumeration
-      return;
-    }
-
-    const resetToken = this.jwtService.sign(
-      { sub: user._id, email: user.email },
-      { expiresIn: '1h' }
-    );
-
-    // Store hashed reset token
-    const hashedToken = await bcrypt.hash(resetToken, 10);
-    await this.userModel.findByIdAndUpdate(user._id, {
-      resetPasswordToken: hashedToken,
-      resetPasswordExpires: new Date(Date.now() + 3600000), // 1 hour
-    });
-
-    // TODO: send the resetToken via email here
-  }
-
-  async resetPassword(token: string, newPassword: string): Promise<void> {
-    const user = await this.userModel.findOne({
-      resetPasswordToken: token,
-      resetPasswordExpires: { $gt: new Date() },
-    });
-
-    if (!user) {
-      throw new UnauthorizedException('Invalid or expired reset token');
-    }
-
-    // Validate new password
-    await this.usersService.validatePassword(newPassword);
-
-    // Hash the new password
-    const hashedPassword = await bcrypt.hash(newPassword, 10);
-
-    // Update user's password and clear reset token fields
-    await this.userModel.findByIdAndUpdate(user.id, {
-      password: hashedPassword,
-      resetPasswordToken: null,
-      resetPasswordExpires: null,
-    });
   }
 }

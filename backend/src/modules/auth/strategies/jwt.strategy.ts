@@ -6,7 +6,7 @@ import { PassportStrategy } from '@nestjs/passport';
 import { Model } from 'mongoose';
 import { ExtractJwt, Strategy } from 'passport-jwt';
 
-import { User } from '../../users/schemas/user.schema';
+import { User } from '../../user/schemas/user.schema';
 
 /**
  * JWT Strategy implementation for Passport authentication.

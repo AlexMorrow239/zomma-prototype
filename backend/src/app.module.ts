@@ -16,7 +16,7 @@ import { configValidationSchema } from './config/config.schema';
 import * as config from './config/configuration';
 import { AuthModule } from './modules/auth/auth.module';
 import { ProspectModule } from './modules/prospect/prospect.module';
-import { UsersModule } from './modules/users/user.module';
+import { UsersModule } from './modules/user/user.module';
 
 @Module({
   imports: [

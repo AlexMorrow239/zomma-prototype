@@ -16,14 +16,10 @@ import {
   ApiTags,
 } from '@nestjs/swagger';
 
-import {
-  ChangePasswordDto,
-  UpdateUserDto,
-  UserResponseDto,
-} from '@/common/dto/users';
+import { UpdateUserDto, UserResponseDto } from '@/common/dto/';
 import { JwtAuthGuard } from '@/modules/auth/guards/jwt-auth.guard';
-import { User } from '@/modules/users/schemas/user.schema';
-import { UsersService } from '@/modules/users/user.service';
+import { User } from '@/modules/user/schemas/user.schema';
+import { UsersService } from '@/modules/user/user.service';
 
 import { GetUser } from './get-user.decorator';
 

@@ -17,11 +17,13 @@ import {
   ApiTags,
 } from '@nestjs/swagger';
 
-import { ProspectResponseDto } from '@/common/dto/prospects/prospect-response.dto';
-import { UpdateProspectDto } from '@/common/dto/prospects/update-prospect.dto';
+import {
+  CreateProspectDto,
+  ProspectResponseDto,
+  UpdateProspectDto,
+} from '@/common/dto';
 import { BudgetRange, ProspectStatus } from '@/common/enums';
 
-import { CreateProspectDto } from '../../common/dto/prospects/create-prospect.dto';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { ProspectService } from './prospect.service';
 

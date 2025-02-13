@@ -9,9 +9,8 @@ import { InjectModel } from '@nestjs/mongoose';
 
 import { Model } from 'mongoose';
 
-import { UpdateProspectDto } from '@/common/dto/prospects/update-prospect.dto';
+import { CreateProspectDto, UpdateProspectDto } from '@/common/dto';
 
-import { CreateProspectDto } from '../../common/dto/prospects/create-prospect.dto';
 import { Prospect, ProspectDocument } from './schemas/prospect.schema';
 
 @Injectable()

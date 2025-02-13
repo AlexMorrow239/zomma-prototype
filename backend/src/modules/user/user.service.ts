@@ -9,7 +9,6 @@ import {
 } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 
-import * as bcrypt from 'bcrypt';
 import { Model } from 'mongoose';
 
 import {
@@ -17,7 +16,7 @@ import {
   UpdateUserDto,
   UserResponseDto,
 } from '../../common/dto/';
-import { User } from '../user/schemas/user.schema';
+import { User } from './schemas/user.schema';
 
 /**
  * Service responsible for managing user accounts in the system.
@@ -30,68 +29,20 @@ export class UsersService {
   constructor(@InjectModel(User.name) private userModel: Model<User>) {}
 
   /**
-   * Validates password strength requirements
-   * @throws BadRequestException if password doesn't meet requirements
-   */
-  validatePassword(password: string): void {
-    const hasUpperCase = /[A-Z]/.test(password);
-    const hasLowerCase = /[a-z]/.test(password);
-    const hasNumbers = /[0-9]/.test(password);
-    const hasSpecialChar = /[^A-Za-z0-9]/.test(password);
-    const isLongEnough = password.length >= 8;
-
-    const errors: string[] = [];
-
-    if (!isLongEnough) errors.push('be at least 8 characters long');
-    if (!hasUpperCase) errors.push('contain at least one uppercase letter');
-    if (!hasLowerCase) errors.push('contain at least one lowercase letter');
-    if (!hasNumbers) errors.push('contain at least one number');
-    if (!hasSpecialChar) errors.push('contain at least one special character');
-
-    if (errors.length > 0) {
-      throw new BadRequestException(`Password must ${errors.join(', ')}`);
-    }
-  }
-
-  /**
    * Creates a new user account.
    * @throws ConflictException if email already exists
    * @throws BadRequestException if password doesn't meet requirements
    */
   async createUser(createUserDto: CreateUserDto): Promise<UserResponseDto> {
     try {
-      // Check for existing user with case-insensitive email
-      const existingUser = await this.userModel.findOne({
-        email: { $regex: new RegExp(`^${createUserDto.email}$`, 'i') },
-      });
-
-      if (existingUser) {
-        throw new ConflictException(
-          'An account with this email already exists'
-        );
-      }
-
-      // Validate password strength
-      try {
-        this.validatePassword(createUserDto.password);
-      } catch (error) {
-        throw new BadRequestException(error.message);
-      }
-
-      // Hash password
-      let hashedPassword: string;
-      try {
-        hashedPassword = await bcrypt.hash(createUserDto.password, 10);
-      } catch (error) {
-        throw new InternalServerErrorException('Error processing password');
-      }
-
-      // Create and save user document
-      const savedUser = await this.userModel.create({
+      // Find user by email and convert to UserResponseDto
+      const savedUser = await this.userModel.findOne({
         email: createUserDto.email.toLowerCase(),
-        password: hashedPassword,
-        name: createUserDto.name,
       });
+
+      if (!savedUser) {
+        throw new NotFoundException('User not found after creation');
+      }
 
       // Remove sensitive data and return user
       const { password: _, ...userData } = savedUser.toObject();
@@ -101,7 +52,10 @@ export class UsersService {
       } as UserResponseDto;
     } catch (error) {
       // Log the error for internal tracking
-      this.logger.error(`Error creating user: ${error.message}`, error.stack);
+      this.logger.error(
+        `Error retrieving created user: ${error.message}`,
+        error.stack
+      );
       throw error;
     }
   }
