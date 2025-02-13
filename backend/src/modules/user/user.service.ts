@@ -12,7 +12,7 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 
 import {
-  CreateUserDto,
+  RegisterUserRequestDto,
   UpdateUserDto,
   UserResponseDto,
 } from '../../common/dto/';
@@ -33,11 +33,13 @@ export class UsersService {
    * @throws ConflictException if email already exists
    * @throws BadRequestException if password doesn't meet requirements
    */
-  async createUser(createUserDto: CreateUserDto): Promise<UserResponseDto> {
+  async createUser(
+    RegisterUserRequestDto: RegisterUserRequestDto
+  ): Promise<UserResponseDto> {
     try {
       // Find user by email and convert to UserResponseDto
       const savedUser = await this.userModel.findOne({
-        email: createUserDto.email.toLowerCase(),
+        email: RegisterUserRequestDto.email.toLowerCase(),
       });
 
       if (!savedUser) {

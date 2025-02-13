@@ -1,7 +1,11 @@
 import { Body, Controller, HttpCode, HttpStatus, Post } from '@nestjs/common';
 import { ApiBody, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 
-import { AuthResponseDto, CreateUserDto, LoginRequestDto } from '@/common/dto';
+import {
+  AuthResponseDto,
+  LoginUserRequestDto,
+  RegisterUserRequestDto,
+} from '@/common/dto';
 
 import { AuthService } from './auth.service';
 
@@ -17,7 +21,7 @@ export class AuthController {
     description: 'Creates a new user account in the system',
   })
   @ApiBody({
-    type: CreateUserDto,
+    type: RegisterUserRequestDto,
     description: 'User registration details',
     examples: {
       validUser: {
@@ -60,9 +64,9 @@ export class AuthController {
     description: 'Conflict - Email already exists',
   })
   async register(
-    @Body() createUserDto: CreateUserDto
+    @Body() RegisterUserRequestDto: RegisterUserRequestDto
   ): Promise<AuthResponseDto> {
-    return await this.authService.register(createUserDto);
+    return await this.authService.register(RegisterUserRequestDto);
   }
 
   @Post('login')
@@ -72,7 +76,7 @@ export class AuthController {
     description: 'Authenticates a user and returns a JWT token',
   })
   @ApiBody({
-    type: LoginRequestDto,
+    type: LoginUserRequestDto,
     description: 'User login credentials',
     examples: {
       validLogin: {
@@ -93,7 +97,7 @@ export class AuthController {
     status: 401,
     description: 'Unauthorized - Invalid credentials',
   })
-  async login(@Body() loginDto: LoginRequestDto): Promise<AuthResponseDto> {
+  async login(@Body() loginDto: LoginUserRequestDto): Promise<AuthResponseDto> {
     return await this.authService.login(loginDto);
   }
 

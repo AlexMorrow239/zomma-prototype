@@ -37,6 +37,12 @@ const passwordSchema = z.object({
 // Registration schema that extends the base schema with password fields
 export const registrationSchema = baseUserSchema
   .merge(passwordSchema)
+  .extend({
+    adminPassword: z
+      .string()
+      .min(1, "Admin password is required")
+      .max(100, "Admin password cannot exceed 100 characters"),
+  })
   .refine((data) => data.password === data.confirmPassword, {
     message: "Passwords don't match",
     path: ["confirmPassword"],

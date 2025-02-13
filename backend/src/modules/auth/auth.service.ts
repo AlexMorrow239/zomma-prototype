@@ -14,8 +14,8 @@ import { Model } from 'mongoose';
 
 import {
   AuthResponseDto,
-  CreateUserDto,
-  LoginRequestDto,
+  LoginUserRequestDto,
+  RegisterUserRequestDto,
   UserInfoDto,
 } from '@/common/dto';
 
@@ -55,10 +55,18 @@ export class AuthService {
     }
   }
 
-  async register(createUserDto: CreateUserDto): Promise<AuthResponseDto> {
+  async register(
+    RegisterUserRequestDto: RegisterUserRequestDto
+  ): Promise<AuthResponseDto> {
+    // Validate admin password
+    const correctAdminPassword =
+      this.configService.get<string>('ADMIN_PASSWORD');
+    if (RegisterUserRequestDto.adminPassword !== correctAdminPassword) {
+      throw new BadRequestException('Invalid Admin Password');
+    }
     // Check for existing user with case-insensitive email
     const existingUser = await this.userModel.findOne({
-      email: { $regex: new RegExp(`^${createUserDto.email}$`, 'i') },
+      email: { $regex: new RegExp(`^${RegisterUserRequestDto.email}$`, 'i') },
     });
 
     if (existingUser) {
@@ -66,28 +74,31 @@ export class AuthService {
     }
 
     // Validate password strength
-    this.validatePassword(createUserDto.password);
+    this.validatePassword(RegisterUserRequestDto.password);
 
     // Hash password
-    const hashedPassword = await bcrypt.hash(createUserDto.password, 10);
+    const hashedPassword = await bcrypt.hash(
+      RegisterUserRequestDto.password,
+      10
+    );
 
     // Create and save user
     const user = await this.userModel.create({
-      email: createUserDto.email.toLowerCase(),
+      email: RegisterUserRequestDto.email.toLowerCase(),
       password: hashedPassword,
-      name: createUserDto.name,
+      name: RegisterUserRequestDto.name,
     });
 
     return await this.generateAuthResponse(user);
   }
 
-  async login(loginDto: LoginRequestDto): Promise<AuthResponseDto> {
+  async login(loginDto: LoginUserRequestDto): Promise<AuthResponseDto> {
     const user = await this.validateUser(loginDto.email, loginDto.password);
     return this.generateAuthResponse(user);
   }
 
   async validateUser(email: string, password: string): Promise<User> {
-    const user = await this.userModel.findOne({ email });
+    const user = await this.userModel.findOne({ email }).select('+password');
 
     if (!user) {
       throw new UnauthorizedException(

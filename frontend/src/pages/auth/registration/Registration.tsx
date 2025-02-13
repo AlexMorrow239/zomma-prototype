@@ -126,6 +126,13 @@ export default function Registration(): ReactElement {
               label="Confirm Password"
               placeholder="Confirm your password"
             />
+            <PasswordField
+              form={form}
+              name="adminPassword"
+              label="Admin Password"
+              placeholder="Enter admin password"
+              help="Required for account creation"
+            />
           </div>
 
           <Button
