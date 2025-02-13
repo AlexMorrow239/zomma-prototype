@@ -1,9 +1,10 @@
 import { z } from "zod";
 
+import { nameSchema } from "@/common/commonSchemas";
+
 export const prospectSchema = z.object({
   contact: z.object({
-    firstName: z.string().min(1, "First name is required"),
-    lastName: z.string().min(1, "Last name is required"),
+    name: nameSchema,
     businessName: z.string().optional(),
     preferredContact: z.enum(["email", "phone", "text"], {
       required_error: "Please select a preferred contact method",
@@ -12,8 +13,14 @@ export const prospectSchema = z.object({
     phone: z.string().min(10, "Phone number must be at least 10 digits"),
   }),
   goals: z.object({
-    financialGoals: z.string().min(1, "Please describe your financial goals"),
-    challenges: z.string().min(1, "Please describe your challenges"),
+    financialGoals: z
+      .string()
+      .min(1, "Please describe your financial goals")
+      .min(10, "Financial goals description should be at least 10 characters"),
+    challenges: z
+      .string()
+      .min(1, "Please describe your challenges")
+      .min(10, "Challenges description should be at least 10 characters"),
   }),
   services: z.object({
     selectedServices: z
@@ -32,8 +39,12 @@ export const prospectSchema = z.object({
     .optional(),
 });
 
+type ContactPaths =
+  | `contact.name.${keyof ProspectFormData["contact"]["name"]}`
+  | `contact.${Exclude<keyof ProspectFormData["contact"], "name">}`;
+
 export type ProspectFormPaths =
-  | `contact.${keyof ProspectFormData["contact"]}`
+  | ContactPaths
   | `goals.${keyof ProspectFormData["goals"]}`
   | `services.${keyof ProspectFormData["services"]}`
   | `budget.${keyof ProspectFormData["budget"]}`;

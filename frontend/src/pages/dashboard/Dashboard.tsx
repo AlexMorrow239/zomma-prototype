@@ -12,12 +12,12 @@ import { EditProfileModal } from "@/components/features/edit-profile-modal/EditP
 import { ProspectDetails } from "@/components/features/prospect-details/ProspectDetails";
 import { ProspectsList } from "@/components/features/prospects-list/ProspectsList";
 
-import { mockProspects } from "@/assets/mocks";
 import { useApiMutation, useApiQuery } from "@/hooks/useApi";
 import { useAuthStore } from "@/stores/authStore";
 import { useLoadingStore } from "@/stores/loadingStore";
+import { useProspectStore } from "@/stores/prospectStore";
 import { useUIStore } from "@/stores/uiStore";
-import type { User as UserType } from "@/types";
+import type { Prospect, User as UserType } from "@/types";
 import { handleError } from "@/utils/errorHandler";
 
 import "./Dashboard.scss";
@@ -25,12 +25,11 @@ import "./Dashboard.scss";
 export default function Dashboard() {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
+
   const { addToast } = useUIStore();
-
-  // Auth store selectors
   const { user, logout, updateUser: storeUpdateUser } = useAuthStore();
+  const { selectedProspect, setSelectedProspect } = useProspectStore();
 
-  const [selectedProspect, setSelectedProspect] = useState(mockProspects[0]);
   const isLoading = useLoadingStore((state) => state.isLoading);
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
   const [isEditProfileOpen, setIsEditProfileOpen] = useState(false);
@@ -44,6 +43,21 @@ export default function Dashboard() {
       staleTime: 30000,
     }
   );
+
+  // Prospects query
+  const { data: prospects = [], isLoading: isProspectsLoading } = useApiQuery<
+    Prospect[]
+  >("/prospects", {
+    useGlobalLoader: false,
+    staleTime: 30000,
+  });
+
+  // Set initial selected prospect when data loads
+  useEffect(() => {
+    if (prospects.length > 0 && !selectedProspect) {
+      setSelectedProspect(prospects[0]);
+    }
+  }, [prospects, selectedProspect, setSelectedProspect]);
 
   // Auth redirect
   useEffect(() => {
@@ -67,7 +81,7 @@ export default function Dashboard() {
     method: "PATCH",
     onSuccess: (data) => {
       setIsEditProfileOpen(false);
-      storeUpdateUser(data); // Update user in store
+      storeUpdateUser(data);
       queryClient.invalidateQueries({ queryKey: ["/users/profile"] });
       addToast({
         type: "success",
@@ -107,7 +121,7 @@ export default function Dashboard() {
     return null;
   }
 
-  if (isProfileLoading) {
+  if (isProfileLoading || isProspectsLoading) {
     return (
       <div className="dashboard">
         <div className="loading-state">
@@ -169,13 +183,15 @@ export default function Dashboard() {
 
       <main className="dashboard-content">
         <div className="prospects-container">
-          <ProspectsList
-            prospects={mockProspects}
-            selectedProspect={selectedProspect}
-            onSelectProspect={setSelectedProspect}
-          />
+          <ProspectsList prospects={prospects} />
           <div className="prospect-details">
-            <ProspectDetails prospect={selectedProspect} />
+            {selectedProspect ? (
+              <ProspectDetails />
+            ) : (
+              <div className="no-selection">
+                Select a prospect to view details
+              </div>
+            )}
           </div>
         </div>
       </main>

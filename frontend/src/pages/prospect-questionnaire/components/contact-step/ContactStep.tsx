@@ -18,19 +18,19 @@ export default function ContactStep({ form, errors }: ContactStepProps) {
           formType="prospect"
           form={form}
           label="First Name"
-          name="contact.firstName"
+          name="contact.name.firstName"
           type="text"
           required
-          error={errors.contact?.firstName?.message}
+          error={errors.contact?.name?.firstName?.message}
         />
         <FormField
           formType="prospect"
           form={form}
           label="Last Name"
-          name="contact.lastName"
+          name="contact.name.lastName"
           type="text"
           required
-          error={errors.contact?.lastName?.message}
+          error={errors.contact?.name?.lastName?.message}
         />
         <FormField
           formType="prospect"

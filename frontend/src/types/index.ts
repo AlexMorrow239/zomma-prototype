@@ -61,7 +61,7 @@ export interface ApiError {
 }
 
 export interface Prospect extends ProspectFormData {
-  id: string;
+  _id: string;
   contacted: boolean;
   createdAt?: string;
   updatedAt?: string;

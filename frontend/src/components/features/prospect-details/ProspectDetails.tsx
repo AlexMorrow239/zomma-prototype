@@ -1,16 +1,29 @@
 import { Button } from "@/components/common/button/Button";
 
-import { useUIStore } from "@/stores/uiStore";
+import { useApiMutation } from "@/hooks/useApi";
+import { useProspectStore } from "@/stores/prospectStore";
 import { Prospect } from "@/types";
 
 import "./ProspectDetails.scss";
 
-interface ProspectDetailsProps {
-  prospect: Prospect;
-}
+export function ProspectDetails() {
+  const { selectedProspect, setSelectedProspect, updateProspect } =
+    useProspectStore();
 
-export function ProspectDetails({ prospect }: ProspectDetailsProps) {
-  const { addToast } = useUIStore();
+  const updateStatusMutation = useApiMutation<Prospect, { status: string }>(
+    `/prospects/${(selectedProspect as NonNullable<typeof selectedProspect>)._id}`,
+    {
+      method: "PUT",
+      onSuccess: (updatedProspect) => {
+        setSelectedProspect(updatedProspect);
+        updateProspect(updatedProspect);
+      },
+    }
+  );
+
+  const handleMarkContacted = () => {
+    updateStatusMutation.mutate({ status: "contacted" });
+  };
 
   const getBudgetRangeLabel = (value: string): string => {
     const budgetRanges: Record<string, string> = {
@@ -23,30 +36,23 @@ export function ProspectDetails({ prospect }: ProspectDetailsProps) {
     return budgetRanges[value] || value;
   };
 
-  const handleMarkContacted = async () => {
-    // TODO: Implement once backend is ready
-    addToast({
-      type: "success",
-      message: "Prospect marked as contacted",
-    });
-    console.log("Mark contacted clicked - Not yet implemented");
-  };
+  if (!selectedProspect) return null;
 
   return (
     <div className="prospect-details">
       <div className="prospect-header">
         <div className="contact-status">
           <span
-            className={`status-indicator ${prospect.contacted ? "contacted" : "not-contacted"}`}
+            className={`status-indicator ${selectedProspect.contacted ? "contacted" : "not-contacted"}`}
           >
-            {prospect.contacted ? "Contacted" : "Not Contacted"}
+            {selectedProspect.contacted ? "Contacted" : "Not Contacted"}
           </span>
 
-          {!prospect.contacted && (
+          {!selectedProspect.contacted && (
             <Button
               variant="primary"
               onClick={handleMarkContacted}
-              isLoading={false} // TODO: Use actual loading state once implemented
+              isLoading={updateStatusMutation.isPending}
             >
               Mark as Contacted
             </Button>
@@ -60,28 +66,33 @@ export function ProspectDetails({ prospect }: ProspectDetailsProps) {
           <div className="detail-item">
             <span className="label">Name</span>
             <span className="value">
-              {prospect.contact.firstName} {prospect.contact.lastName}
+              {selectedProspect.contact.name.firstName}{" "}
+              {selectedProspect.contact.name.lastName}
             </span>
           </div>
-          {prospect.contact.businessName && (
+          {selectedProspect.contact.businessName && (
             <div className="detail-item">
               <span className="label">Business Name</span>
-              <span className="value">{prospect.contact.businessName}</span>
+              <span className="value">
+                {selectedProspect.contact.businessName}
+              </span>
             </div>
           )}
           <div className="detail-item">
             <span className="label">Email</span>
-            <span className="value">{prospect.contact.email}</span>
+            <span className="value">{selectedProspect.contact.email}</span>
           </div>
           <div className="detail-item">
             <span className="label">Phone</span>
-            <span className="value">{prospect.contact.phone}</span>
+            <span className="value">{selectedProspect.contact.phone}</span>
           </div>
           <div className="detail-item">
             <span className="label">Preferred Contact</span>
             <span className="value">
-              {prospect.contact.preferredContact.charAt(0).toUpperCase() +
-                prospect.contact.preferredContact.slice(1)}
+              {selectedProspect.contact.preferredContact
+                .charAt(0)
+                .toUpperCase() +
+                selectedProspect.contact.preferredContact.slice(1)}
             </span>
           </div>
         </div>
@@ -92,11 +103,15 @@ export function ProspectDetails({ prospect }: ProspectDetailsProps) {
         <div className="details-stack">
           <div className="detail-item">
             <span className="label">Financial Goals</span>
-            <p className="value text-block">{prospect.goals.financialGoals}</p>
+            <p className="value text-block">
+              {selectedProspect.goals.financialGoals}
+            </p>
           </div>
           <div className="detail-item">
             <span className="label">Current Challenges</span>
-            <p className="value text-block">{prospect.goals.challenges}</p>
+            <p className="value text-block">
+              {selectedProspect.goals.challenges}
+            </p>
           </div>
         </div>
       </section>
@@ -104,7 +119,7 @@ export function ProspectDetails({ prospect }: ProspectDetailsProps) {
       <section className="details-section">
         <h2>Services of Interest</h2>
         <div className="services-list">
-          {prospect.services.selectedServices.map((service) => (
+          {selectedProspect.services.selectedServices.map((service) => (
             <span key={service} className="service-tag">
               {service}
             </span>
@@ -117,7 +132,7 @@ export function ProspectDetails({ prospect }: ProspectDetailsProps) {
         <div className="detail-item">
           <span className="label">Expected Budget Range</span>
           <span className="value">
-            {getBudgetRangeLabel(prospect.budget.budgetRange)}
+            {getBudgetRangeLabel(selectedProspect.budget.budgetRange)}
           </span>
         </div>
       </section>
