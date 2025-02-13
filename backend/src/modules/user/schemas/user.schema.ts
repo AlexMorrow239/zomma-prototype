@@ -7,13 +7,6 @@ import { Name } from '@/common/schemas/name.schema';
 
 /**
  * User schema representing authenticated users of the system.
- *
- * Key features:
- * - Email-based authentication
- * - Basic profile information
- * - Account status management
- * - Password reset functionality
- *
  */
 @Schema({ timestamps: true })
 export class User extends BaseSchema {
@@ -56,24 +49,11 @@ export class User extends BaseSchema {
     type: Name,
   })
   name: Name;
-
-  // Inherited from BaseSchema:
-  // createdAt: Date;
-  // updatedAt: Date;
 }
 
 export type UserDocument = User & Document;
 
-/**
- * Generated Mongoose schema for the User class.
- * Includes all properties and their validation rules.
- * Automatically adds createdAt and updatedAt fields.
- */
 export const UserSchema = SchemaFactory.createForClass(User);
-
-// Add indexes for common queries
-UserSchema.index({ email: 1 });
-UserSchema.index({ 'name.lastName': 1, 'name.firstName': 1 });
 
 // for full name
 UserSchema.virtual('fullName').get(function () {

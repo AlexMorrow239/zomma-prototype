@@ -85,26 +85,63 @@ export class UsersService {
     userId: string,
     updateProfileDto: UpdateUserDto
   ): Promise<UserResponseDto> {
-    const user = await this.userModel.findById(userId).lean();
-    if (!user) {
-      throw new NotFoundException('User not found');
-    }
+    try {
+      // Check if user exists
+      const user = await this.userModel.findById(userId).lean();
+      if (!user) {
+        throw new NotFoundException('User not found');
+      }
 
-    if ('password' in updateProfileDto) {
-      throw new BadRequestException('Can not update password here');
-    }
+      // Prevent password updates through this endpoint
+      if ('password' in updateProfileDto) {
+        throw new BadRequestException(
+          'Cannot update password through this endpoint'
+        );
+      }
 
-    const updatedUser = await this.userModel
-      .findByIdAndUpdate(userId, updateProfileDto, { new: true, lean: true })
-      .select('-password');
-    if (!updatedUser) {
-      throw new NotFoundException('User not found after update');
-    }
+      // Attempt to update user
+      const updatedUser = await this.userModel
+        .findByIdAndUpdate(userId, updateProfileDto, {
+          new: true,
+          lean: true,
+          runValidators: true,
+        })
+        .select('-password');
 
-    const { password: _, ...userData } = updatedUser;
-    return {
-      ...userData,
-      _id: userData._id.toString(),
-    } as UserResponseDto;
+      if (!updatedUser) {
+        throw new NotFoundException('User not found after update');
+      }
+
+      // Transform and return response
+      const { password: _, ...userData } = updatedUser;
+      return {
+        ...userData,
+        _id: userData._id.toString(),
+      } as UserResponseDto;
+    } catch (error) {
+      // Log the error
+      this.logger.error(
+        `Failed to update user ${userId}: ${error.message}`,
+        error.stack
+      );
+
+      // Handle specific error types
+      if (error.name === 'ValidationError') {
+        throw new BadRequestException('Invalid update data provided');
+      }
+      if (error.code === 11000) {
+        throw new ConflictException('Email address already in use');
+      }
+      if (
+        error instanceof BadRequestException ||
+        error instanceof NotFoundException ||
+        error instanceof ConflictException
+      ) {
+        throw error;
+      }
+
+      // For unexpected errors
+      throw new InternalServerErrorException('Failed to update user');
+    }
   }
 }
