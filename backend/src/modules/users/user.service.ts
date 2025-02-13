@@ -2,19 +2,25 @@ import {
   BadRequestException,
   ConflictException,
   Injectable,
+  InternalServerErrorException,
+  Logger,
   NotFoundException,
   UnauthorizedException,
 } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 
 import * as bcrypt from 'bcrypt';
+import { string } from 'joi';
 import { Model } from 'mongoose';
+import { async } from 'rxjs';
 
 import { ChangePasswordDto } from '@/common/dto/users';
 
-import { CreateUserDto } from '../../common/dto/users/create-user.dto';
-import { UpdateUserDto } from '../../common/dto/users/update-user.dto';
-import { UserResponseDto } from '../../common/dto/users/user-responses.dto';
+import {
+  CreateUserDto,
+  UpdateUserDto,
+  UserResponseDto,
+} from '../../common/dto/';
 import { User } from './schemas/user.schema';
 
 /**
@@ -23,6 +29,8 @@ import { User } from './schemas/user.schema';
  */
 @Injectable()
 export class UsersService {
+  private readonly logger = new Logger(UsersService.name);
+
   constructor(@InjectModel(User.name) private userModel: Model<User>) {}
 
   /**
@@ -55,29 +63,51 @@ export class UsersService {
    * @throws BadRequestException if password doesn't meet requirements
    */
   async createUser(createUserDto: CreateUserDto): Promise<UserResponseDto> {
-    const existingUser = await this.userModel.findOne({
-      email: createUserDto.email,
-    });
+    try {
+      // Check for existing user with case-insensitive email
+      const existingUser = await this.userModel.findOne({
+        email: { $regex: new RegExp(`^${createUserDto.email}$`, 'i') },
+      });
 
-    if (existingUser) {
-      throw new ConflictException('Email already exists');
+      if (existingUser) {
+        throw new ConflictException(
+          'An account with this email already exists'
+        );
+      }
+
+      // Validate password strength
+      try {
+        this.validatePassword(createUserDto.password);
+      } catch (error) {
+        throw new BadRequestException(error.message);
+      }
+
+      // Hash password
+      let hashedPassword: string;
+      try {
+        hashedPassword = await bcrypt.hash(createUserDto.password, 10);
+      } catch (error) {
+        throw new InternalServerErrorException('Error processing password');
+      }
+
+      // Create and save user document
+      const savedUser = await this.userModel.create({
+        email: createUserDto.email.toLowerCase(),
+        password: hashedPassword,
+        name: createUserDto.name,
+      });
+
+      // Remove sensitive data and return user
+      const { password: _, ...userData } = savedUser.toObject();
+      return {
+        ...userData,
+        _id: userData._id.toString(),
+      } as UserResponseDto;
+    } catch (error) {
+      // Log the error for internal tracking
+      this.logger.error(`Error creating user: ${error.message}`, error.stack);
+      throw error;
     }
-
-    // Validate password strength
-    this.validatePassword(createUserDto.password);
-
-    const hashedPassword = await bcrypt.hash(createUserDto.password, 10);
-    const newUser = await this.userModel.create({
-      ...createUserDto,
-      password: hashedPassword,
-      isActive: true,
-    });
-
-    const { password: _, ...userData } = newUser.toObject();
-    return {
-      ...userData,
-      _id: userData._id.toString(),
-    } as UserResponseDto;
   }
 
   /**

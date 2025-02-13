@@ -57,11 +57,18 @@ async function fetchApi<T>(
   endpoint: string,
   options: AxiosRequestConfig = {}
 ): Promise<T> {
+  console.log("[fetchApi] Received options:", options);
+  console.log("[fetchApi] Request data:", options.data);
   try {
-    const response = await axiosInstance({
+    const config = {
       url: endpoint,
       ...options,
-    });
+      data: options.data || undefined,
+    };
+    console.log("[fetchApi] Final axios config:", config);
+
+    const response = await axiosInstance.request(config);
+    console.log("[fetchApi] Response:", response);
     return response.data;
   } catch (error) {
     if (error instanceof AxiosError) {
@@ -127,12 +134,18 @@ export function useApiMutation<TData, TVariables>(
   const setLoading = useLoadingStore((state) => state.setLoading);
 
   return useMutation<TData, Error, TVariables>({
-    mutationFn: (variables) =>
-      fetchApi<TData>(endpoint, {
+    mutationFn: (variables) => {
+      console.log("[useApiMutation] Endpoint:", endpoint);
+      console.log("[useApiMutation] Method:", method);
+      console.log("[useApiMutation] Variables:", variables);
+      console.log("[useApiMutation] Additional config:", axiosConfig);
+
+      return fetchApi<TData>(endpoint, {
         method,
         data: variables,
         ...axiosConfig,
-      }),
+      });
+    },
     ...mutationOptions,
     onSettled: (data, error, variables, context) => {
       if (useGlobalLoader) {

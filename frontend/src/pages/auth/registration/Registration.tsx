@@ -24,23 +24,27 @@ export default function Registration(): ReactElement {
   const setAuth = useAuthStore((state) => state.setAuth);
 
   // Set up mutation for registration
-  const registerMutation = useApiMutation<AuthResponse, RegistrationForm>(
-    "/auth/register",
-    {
-      onSuccess: (data) => {
-        // Use the destructured setAuth instead of accessing through getState()
-        setAuth(data.user, data.token);
+  const registerMutation = useApiMutation<
+    AuthResponse,
+    Omit<RegistrationForm, "confirmPassword">
+  >("/auth/register", {
+    onSuccess: (data) => {
+      console.log("[Registration] onSuccess data:", data);
+      // Use the destructured setAuth instead of accessing through getState()
+      setAuth(data.user, data.token);
 
-        addToast({
-          type: "success",
-          message: "Registration successful! Welcome aboard.",
-        });
+      addToast({
+        type: "success",
+        message: "Registration successful! Welcome aboard.",
+      });
 
-        navigate("/dashboard");
-      },
-      onError: handleError, // Simplified error handling
-    }
-  );
+      navigate("/dashboard");
+    },
+    onError: (error) => {
+      console.error("[Registration] Mutation error:", error);
+      handleError(error);
+    },
+  });
 
   const form = useForm<RegistrationForm>({
     resolver: zodResolver(registrationSchema),
@@ -50,7 +54,20 @@ export default function Registration(): ReactElement {
   const { handleSubmit } = form;
 
   const onSubmit = async (data: RegistrationForm): Promise<void> => {
-    await registerMutation.mutateAsync(data);
+    console.log("[Registration] Form data before processing:", data);
+
+    const { confirmPassword, ...registrationData } = data;
+    console.log(
+      "[Registration] Data being sent to mutation:",
+      registrationData
+    );
+
+    try {
+      const result = await registerMutation.mutateAsync(registrationData);
+      console.log("[Registration] Mutation result:", result);
+    } catch (error) {
+      console.error("[Registration] Error in onSubmit:", error);
+    }
   };
 
   return (

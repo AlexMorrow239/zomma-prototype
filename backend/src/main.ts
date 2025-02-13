@@ -3,6 +3,8 @@ import { ConfigService } from '@nestjs/config';
 import { NestFactory } from '@nestjs/core';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 
+import * as express from 'express';
+
 import { AppModule } from './app.module';
 import { HttpExceptionFilter } from './common/filters/http-exception.filter';
 import { ErrorHandlingInterceptor } from './common/interceptors/error-handling.interceptor';
@@ -52,9 +54,15 @@ function configureGlobalMiddleware(app: any, logger: Logger) {
   app.useGlobalPipes(
     new ValidationPipe({
       transform: true,
-      whitelist: true,
-      forbidNonWhitelisted: true,
-      transformOptions: { enableImplicitConversion: true },
+      whitelist: false, // Allow non-whitelisted properties
+      forbidNonWhitelisted: false, // Don't throw errors for non-whitelisted properties
+      transformOptions: {
+        enableImplicitConversion: true,
+        exposeUnsetFields: false,
+      },
+      validateCustomDecorators: true,
+      skipMissingProperties: true, // Skip validation of missing properties
+      stopAtFirstError: false,
     })
   );
   app.useGlobalInterceptors(new ErrorHandlingInterceptor());
@@ -62,7 +70,8 @@ function configureGlobalMiddleware(app: any, logger: Logger) {
 }
 
 function configureRequestLogging(app: any, logger: Logger) {
-  logger.debug('Configuring request logging middleware');
+  app.use(express.json());
+  app.use(express.urlencoded({ extended: true }));
 
   app.use((req: any, res: any, next: () => void) => {
     // Log request
