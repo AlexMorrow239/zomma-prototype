@@ -46,11 +46,6 @@ const services = [
 export default function ProspectQuestionnaire() {
   const [submitSuccess, setSubmitSuccess] = useState(false);
 
-  const onSubmit = async (data: ProspectFormData): Promise<void> => {
-    console.log("Form submitted:", data);
-    setSubmitSuccess(true);
-  };
-
   const {
     form,
     currentStep,
@@ -58,13 +53,22 @@ export default function ProspectQuestionnaire() {
     handleNextStep,
     handlePreviousStep,
     handleSubmit,
-  } = useProspectForm(onSubmit);
+  } = useProspectForm();
 
   const {
     formState: { errors },
     watch,
     setValue,
   } = form;
+
+  const onSubmit = async (data: ProspectFormData) => {
+    try {
+      await handleSubmit(data);
+      setSubmitSuccess(true);
+    } catch (error) {
+      // Error is already handled in useProspectForm
+    }
+  };
 
   const renderCurrentStep = () => {
     switch (currentStep) {
@@ -104,7 +108,7 @@ export default function ProspectQuestionnaire() {
 
   return (
     <div className="questionnaire">
-      <form onSubmit={form.handleSubmit(handleSubmit)} noValidate>
+      <form onSubmit={form.handleSubmit(onSubmit)} noValidate>
         <div className="form-header">
           <div className="progress-sections">
             {["Contact", "Goals", "Services", "Budget"].map(

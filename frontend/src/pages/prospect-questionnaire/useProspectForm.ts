@@ -3,8 +3,35 @@ import { useState } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm, type UseFormReturn } from "react-hook-form";
 
+import { useApiMutation } from "@/hooks/useApi";
+import { useLoadingStore } from "@/stores/loadingStore";
+import { useUIStore } from "@/stores/uiStore";
+
 import type { ProspectFormData } from "./schema";
 import { prospectSchema } from "./schema";
+
+type ProspectApiRequest = {
+  contact: {
+    name: {
+      firstName: string;
+      lastName: string;
+    };
+    email: string;
+    phone: string;
+    preferredContact: "email" | "phone" | "text";
+    businessName?: string;
+  };
+  goals: {
+    financialGoals: string;
+    challenges: string;
+  };
+  services: {
+    selectedServices: string[];
+  };
+  budget: {
+    budgetRange: string;
+  };
+};
 
 type NestedPaths =
   | keyof ProspectFormData
@@ -13,9 +40,7 @@ type NestedPaths =
   | `services.${keyof ProspectFormData["services"]}`
   | `budget.${keyof ProspectFormData["budget"]}`;
 
-export const useProspectForm = (
-  onSubmit: (data: ProspectFormData) => Promise<void>
-): {
+export const useProspectForm = (): {
   form: UseFormReturn<ProspectFormData>;
   currentStep: number;
   isSubmitting: boolean;
@@ -26,6 +51,16 @@ export const useProspectForm = (
 } => {
   const [currentStep, setCurrentStep] = useState(1);
   const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const setLoading = useLoadingStore((state) => state.setLoading);
+  const addToast = useUIStore((state) => state.addToast);
+
+  const createProspectMutation = useApiMutation<any, ProspectApiRequest>(
+    "/prospects",
+    {
+      method: "POST",
+    }
+  );
 
   const form = useForm<ProspectFormData>({
     resolver: zodResolver(prospectSchema),
@@ -94,12 +129,48 @@ export const useProspectForm = (
   const handleSubmit = async (data: ProspectFormData): Promise<void> => {
     try {
       setIsSubmitting(true);
-      await onSubmit(data);
+      setLoading(true);
+      const formattedData: ProspectApiRequest = {
+        contact: {
+          name: {
+            firstName: data.contact.firstName,
+            lastName: data.contact.lastName,
+          },
+          email: data.contact.email,
+          phone: data.contact.phone,
+          preferredContact: data.contact.preferredContact,
+          ...(data.contact.businessName && {
+            businessName: data.contact.businessName,
+          }),
+        },
+        goals: {
+          financialGoals: data.goals.financialGoals,
+          challenges: data.goals.challenges,
+        },
+        services: {
+          selectedServices: data.services.selectedServices,
+        },
+        budget: {
+          budgetRange: data.budget.budgetRange,
+        },
+      };
+
+      await createProspectMutation.mutateAsync(formattedData);
+      addToast({
+        type: "success",
+        message: "Your questionnaire has been submitted successfully!",
+      });
       handleReset();
     } catch (error) {
       console.error("Error in submission:", error);
+      addToast({
+        type: "error",
+        message: "Failed to submit questionnaire. Please try again.",
+      });
+      throw error;
     } finally {
       setIsSubmitting(false);
+      setLoading(false);
     }
   };
 
