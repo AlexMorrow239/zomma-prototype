@@ -23,20 +23,11 @@ import { UsersService } from '@/modules/user/user.service';
 
 import { GetUser } from './get-user.decorator';
 
-/**
- * Controller handling user-related HTTP endpoints.
- * Groups functionality into:
- * - Profile management (view/update)
- * - Security operations (password change)
- * - Account status management (deactivation)
- */
 @ApiTags('Users')
 @Controller('users')
 @ApiBearerAuth()
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
-
-  //#region Profile Management
 
   @Get('/profile')
   @UseGuards(JwtAuthGuard)
@@ -53,8 +44,8 @@ export class UsersController {
     status: 401,
     description: 'Unauthorized - Invalid or expired token',
   })
-  async getProfile(@GetUser() user: User): Promise<UserResponseDto> {
-    return await this.usersService.getUser(user.id);
+  async getProfile(@GetUser('id') userId: string): Promise<UserResponseDto> {
+    return await this.usersService.getUser(userId);
   }
 
   @Patch('/profile')
@@ -82,10 +73,6 @@ export class UsersController {
   ): Promise<UserResponseDto> {
     return await this.usersService.updateUser(user.id, updateProfileDto);
   }
-
-  //#endregion
-
-  //#region Security Operations
 
   // @Post('change-password')
   // @UseGuards(JwtAuthGuard)

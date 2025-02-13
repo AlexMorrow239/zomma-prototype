@@ -65,12 +65,12 @@ export class UsersService {
    * @throws NotFoundException if user not found
    */
   async getUser(userId: string): Promise<UserResponseDto> {
-    const user = await this.userModel.findById(userId);
+    const user = await this.userModel.findById(userId).lean();
     if (!user) {
       throw new NotFoundException('User not found');
     }
 
-    const { password: _, ...userData } = user.toObject();
+    const { password: _, ...userData } = user;
     return {
       ...userData,
       _id: userData._id.toString(),
