@@ -77,13 +77,7 @@ export default function Dashboard() {
     onError: handleError,
   });
 
-  const handleProfileUpdate = async (data: {
-    name: {
-      firstName: string;
-      lastName: string;
-    };
-    email: string;
-  }) => {
+  const handleProfileUpdate = async (data: UserType) => {
     await updateProfileMutation.mutateAsync({
       name: data.name,
       email: data.email,
@@ -190,7 +184,7 @@ export default function Dashboard() {
         isOpen={isEditProfileOpen}
         onClose={() => setIsEditProfileOpen(false)}
         onSubmit={handleProfileUpdate}
-        user={profile}
+        initialData={profile}
       />
     </div>
   );

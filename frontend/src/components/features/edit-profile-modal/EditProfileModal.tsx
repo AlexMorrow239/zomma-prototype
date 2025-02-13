@@ -14,17 +14,17 @@ interface EditProfileModalProps {
   isOpen: boolean;
   onClose: () => void;
   onSubmit: (data: EditProfileForm) => void;
-  user: User;
+  initialData: User;
 }
 
 export function EditProfileModal({
   isOpen,
   onClose,
   onSubmit,
-  user,
+  initialData,
 }: EditProfileModalProps): ReactElement {
   const form = useForm<EditProfileForm>({
-    defaultValues: user,
+    defaultValues: initialData,
     resolver: zodResolver(editProfileSchema),
   });
 

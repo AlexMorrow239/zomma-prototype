@@ -85,18 +85,23 @@ export class UsersService {
     userId: string,
     updateProfileDto: UpdateUserDto
   ): Promise<UserResponseDto> {
-    const user = await this.userModel.findById(userId);
+    const user = await this.userModel.findById(userId).lean();
     if (!user) {
       throw new NotFoundException('User not found');
     }
 
-    const updatedUser = await this.userModel.findByIdAndUpdate(
-      userId,
-      { $set: updateProfileDto },
-      { new: true }
-    );
+    if ('password' in updateProfileDto) {
+      throw new BadRequestException('Can not update password here');
+    }
 
-    const { password: _, ...userData } = updatedUser.toObject();
+    const updatedUser = await this.userModel
+      .findByIdAndUpdate(userId, updateProfileDto, { new: true, lean: true })
+      .select('-password');
+    if (!updatedUser) {
+      throw new NotFoundException('User not found after update');
+    }
+
+    const { password: _, ...userData } = updatedUser;
     return {
       ...userData,
       _id: userData._id.toString(),

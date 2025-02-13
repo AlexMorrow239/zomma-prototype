@@ -52,57 +52,13 @@ export class UsersController {
   @UseGuards(JwtAuthGuard)
   @ApiOperation({
     summary: 'Update user profile',
-    description: "Updates the authenticated user's profile information",
-  })
-  @ApiResponse({
-    status: 200,
-    description: 'Profile updated successfully',
-    type: UserResponseDto,
-  })
-  @ApiResponse({
-    status: 400,
-    description: 'Bad Request - Invalid data provided',
-  })
-  @ApiResponse({
-    status: 401,
-    description: 'Unauthorized - Invalid or expired token',
+    description:
+      "Updates the authenticated user's profile information (excluding password)",
   })
   async updateProfile(
-    @GetUser() user: User,
+    @GetUser('id') userId: string,
     @Body() updateProfileDto: UpdateUserDto
   ): Promise<UserResponseDto> {
-    return await this.usersService.updateUser(user.id, updateProfileDto);
+    return await this.usersService.updateUser(userId, updateProfileDto);
   }
-
-  // @Post('change-password')
-  // @UseGuards(JwtAuthGuard)
-  // @HttpCode(HttpStatus.OK)
-  // @ApiOperation({
-  //   summary: 'Change password',
-  //   description: "Changes the authenticated user's password",
-  // })
-  // @ApiResponse({
-  //   status: 200,
-  //   description: 'Password changed successfully',
-  // })
-  // @ApiResponse({
-  //   status: 400,
-  //   description: 'Bad Request - Invalid password format or same as current',
-  // })
-  // @ApiResponse({
-  //   status: 401,
-  //   description: 'Unauthorized - Invalid current password or token',
-  // })
-  // async changePassword(
-  //   @GetUser() user: User,
-  //   @Body() changePasswordDto: ChangePasswordDto
-  // ): Promise<void> {
-  //   await this.usersService.changeUserPassword(
-  //     user.id,
-  //     changePasswordDto.currentPassword,
-  //     changePasswordDto.newPassword
-  //   );
-  // }
-
-  //#endregion
 }
