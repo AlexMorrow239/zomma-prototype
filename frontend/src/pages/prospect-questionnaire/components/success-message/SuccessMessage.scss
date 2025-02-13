@@ -1,0 +1,105 @@
+@use "../../../../styles/abstracts/index" as *;
+
+.success-message-container {
+  @include flex-center;
+  min-height: 100vh;
+  background-color: var(--color-background-alt);
+  padding: var(--spacing-4);
+}
+
+.success-card {
+  width: 100%;
+  max-width: 28rem;
+  background-color: var(--color-background);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-lg);
+  overflow: hidden;
+
+  .card-header {
+    padding: var(--spacing-6) var(--spacing-6) var(--spacing-2);
+    text-align: center;
+
+    .logo-container {
+      @include flex-center;
+      margin: 0 auto var(--spacing-4);
+      padding: var(--spacing-2) var(--spacing-4);
+      background-color: var(--color-info-light);
+      border-radius: var(--radius-md);
+      width: fit-content;
+
+      font-family: var(--font-primary);
+      font-weight: var(--font-weight-bold);
+      font-size: var(--font-size-2xl);
+      letter-spacing: 2px;
+      color: var(--color-info);
+
+      .logo-letter {
+        display: inline-block;
+        animation: pulse 1.5s infinite ease-in-out;
+      }
+    }
+
+    h2 {
+      font-size: var(--font-size-2xl);
+      font-weight: var(--font-weight-semibold);
+    }
+  }
+
+  .card-content {
+    padding: 0 var(--spacing-6) var(--spacing-6);
+    text-align: center;
+
+    .check-icon {
+      @include flex-center;
+      width: 3rem;
+      height: 3rem;
+      margin: 0 auto var(--spacing-4);
+      font-size: var(--font-size-2xl);
+      color: var(--color-success);
+      animation: bounce 1s infinite;
+    }
+
+    p {
+      color: var(--color-text-light);
+      max-width: 32rem;
+      margin: 0 auto;
+    }
+  }
+
+  .card-footer {
+    padding: 0 var(--spacing-6) var(--spacing-6);
+
+    .return-button {
+      @include button-base;
+      @include button-variant(--color-primary, --color-background);
+      width: 100%;
+      height: var(--button-height-base);
+
+      .arrow-icon {
+        margin-left: var(--spacing-2);
+      }
+    }
+  }
+}
+
+@keyframes bounce {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-0.5rem);
+  }
+}
+
+@keyframes pulse {
+  0%,
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  50% {
+    transform: scale(0.9);
+    opacity: 0.5;
+  }
+}

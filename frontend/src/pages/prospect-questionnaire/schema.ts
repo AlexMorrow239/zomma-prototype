@@ -25,6 +25,11 @@ export const prospectSchema = z.object({
       required_error: "Please select a budget range",
     }),
   }),
+  status: z.enum(["pending", "contacted"]).default("pending").optional(),
+  notes: z
+    .string()
+    .max(1000, "Notes must not exceed 1000 characters")
+    .optional(),
 });
 
 export type ProspectFormPaths =

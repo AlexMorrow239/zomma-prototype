@@ -6,6 +6,7 @@ import BudgetStep from "./components/budget-step/BudgetStep";
 import ContactStep from "./components/contact-step/ContactStep";
 import GoalsStep from "./components/goals-step/GoalsStep";
 import ServicesStep from "./components/service-step/ServiceStep";
+import SuccessMessage from "./components/success-message/SuccessMessage";
 import "./ProspectQuestionnaire.scss";
 import { ProspectFormData } from "./schema";
 import { useProspectForm } from "./useProspectForm";
@@ -93,17 +94,7 @@ export default function ProspectQuestionnaire() {
   };
 
   if (submitSuccess) {
-    return (
-      <div className="questionnaire">
-        <div className="success-message">
-          <h2>Thank You!</h2>
-          <p>
-            Your questionnaire has been submitted successfully. A ZOMMA
-            representative will contact you shortly.
-          </p>
-        </div>
-      </div>
-    );
+    return <SuccessMessage />;
   }
 
   return (
