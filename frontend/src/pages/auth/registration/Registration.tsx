@@ -29,7 +29,6 @@ export default function Registration(): ReactElement {
     Omit<RegistrationForm, "confirmPassword">
   >("/auth/register", {
     onSuccess: (data) => {
-      console.log("[Registration] onSuccess data:", data);
       // Use the destructured setAuth instead of accessing through getState()
       setAuth(data.user, data.token);
 
@@ -54,17 +53,10 @@ export default function Registration(): ReactElement {
   const { handleSubmit } = form;
 
   const onSubmit = async (data: RegistrationForm): Promise<void> => {
-    console.log("[Registration] Form data before processing:", data);
-
     const { confirmPassword, ...registrationData } = data;
-    console.log(
-      "[Registration] Data being sent to mutation:",
-      registrationData
-    );
 
     try {
-      const result = await registerMutation.mutateAsync(registrationData);
-      console.log("[Registration] Mutation result:", result);
+      registerMutation.mutateAsync(registrationData);
     } catch (error) {
       console.error("[Registration] Error in onSubmit:", error);
     }

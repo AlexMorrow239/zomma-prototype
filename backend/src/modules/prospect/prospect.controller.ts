@@ -121,14 +121,6 @@ export class ProspectController {
     },
   })
   async create(@Body() createProspectDto: CreateProspectDto) {
-    console.log(
-      'Received prospect data:',
-      JSON.stringify(createProspectDto, null, 2)
-    );
-    console.log(
-      'Received prospect data:',
-      JSON.stringify(createProspectDto, null, 2)
-    );
     return await this.prospectsService.create(createProspectDto);
   }
 
