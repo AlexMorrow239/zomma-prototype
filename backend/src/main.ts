@@ -25,9 +25,6 @@ async function bootstrap() {
     // Configure global middleware
     configureGlobalMiddleware(app, logger);
 
-    // Add request logging middleware
-    configureRequestLogging(app, logger);
-
     // Configure CORS
     configureCors(app, configService, logger);
 
@@ -48,76 +45,21 @@ async function bootstrap() {
 }
 
 function configureGlobalMiddleware(app: any, logger: Logger) {
-  logger.debug('Configuring global middleware');
-
   app.setGlobalPrefix('api');
   app.useGlobalPipes(
     new ValidationPipe({
       transform: true,
-      whitelist: false, // Allow non-whitelisted properties
-      forbidNonWhitelisted: false, // Don't throw errors for non-whitelisted properties
+      whitelist: false,
+      forbidNonWhitelisted: false,
       transformOptions: {
         enableImplicitConversion: true,
         exposeUnsetFields: false,
       },
       validateCustomDecorators: true,
-      skipMissingProperties: true, // Skip validation of missing properties
+      skipMissingProperties: true,
       stopAtFirstError: false,
     })
   );
-  app.useGlobalInterceptors(new ErrorHandlingInterceptor());
-  app.useGlobalFilters(new HttpExceptionFilter());
-}
-
-function configureRequestLogging(app: any, logger: Logger) {
-  app.use(express.json());
-  app.use(express.urlencoded({ extended: true }));
-
-  app.use((req: any, res: any, next: () => void) => {
-    // Log request
-    const requestLog = {
-      method: req.method,
-      url: req.url,
-      headers: req.headers,
-      body: req.body,
-      query: req.query,
-    };
-    logger.debug('Incoming request', requestLog);
-
-    // Capture response data
-    const oldEnd = res.end;
-    const chunks: Buffer[] = [];
-
-    // Override write to capture response body chunks
-    const oldWrite = res.write;
-    res.write = function (chunk: Buffer, ...args: any[]) {
-      chunks.push(Buffer.from(chunk));
-      return oldWrite.apply(res, [chunk, ...args]);
-    };
-
-    res.end = function (chunk: Buffer, ...args: any[]) {
-      if (chunk) {
-        chunks.push(Buffer.from(chunk));
-      }
-
-      const responseBody = Buffer.concat(chunks).toString('utf8');
-      let parsedBody;
-      try {
-        parsedBody = JSON.parse(responseBody);
-      } catch {
-        parsedBody = responseBody;
-      }
-
-      logger.debug('Outgoing response', {
-        statusCode: res.statusCode,
-        headers: res.getHeaders(),
-        body: parsedBody,
-      });
-
-      return oldEnd.apply(res, [chunk, ...args]);
-    };
-    next();
-  });
 }
 
 function configureCors(app: any, configService: ConfigService, logger: Logger) {
@@ -140,8 +82,6 @@ function configureCors(app: any, configService: ConfigService, logger: Logger) {
 }
 
 function setupSwagger(app: any, logger: Logger) {
-  logger.debug('Setting up Swagger documentation');
-
   const config = new DocumentBuilder()
     .setTitle('Research Engine API')
     .setDescription('University of Miami Research Engine API')

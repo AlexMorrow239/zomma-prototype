@@ -49,16 +49,6 @@
     padding: 0 var(--spacing-6) var(--spacing-6);
     text-align: center;
 
-    .check-icon {
-      @include flex-center;
-      width: 3rem;
-      height: 3rem;
-      margin: 0 auto var(--spacing-4);
-      font-size: var(--font-size-2xl);
-      color: var(--color-success);
-      animation: bounce 1s infinite;
-    }
-
     p {
       color: var(--color-text-light);
       max-width: 32rem;
@@ -81,17 +71,6 @@
     }
   }
 }
-
-@keyframes bounce {
-  0%,
-  100% {
-    transform: translateY(0);
-  }
-  50% {
-    transform: translateY(-0.5rem);
-  }
-}
-
 @keyframes pulse {
   0%,
   100% {

@@ -36,6 +36,7 @@ type ProspectApiRequest = {
 type NestedPaths =
   | keyof ProspectFormData
   | `contact.${keyof ProspectFormData["contact"]}`
+  | `contact.name.${keyof ProspectFormData["contact"]["name"]}`
   | `goals.${keyof ProspectFormData["goals"]}`
   | `services.${keyof ProspectFormData["services"]}`
   | `budget.${keyof ProspectFormData["budget"]}`;
@@ -66,8 +67,10 @@ export const useProspectForm = (): {
     resolver: zodResolver(prospectSchema),
     defaultValues: {
       contact: {
-        firstName: "",
-        lastName: "",
+        name: {
+          firstName: "",
+          lastName: "",
+        },
         businessName: "",
         preferredContact: "email",
         email: "",
@@ -92,8 +95,8 @@ export const useProspectForm = (): {
     switch (currentStep) {
       case 1:
         fieldsToValidate = [
-          "contact.firstName",
-          "contact.lastName",
+          "contact.name.firstName",
+          "contact.name.lastName",
           "contact.email",
           "contact.phone",
           "contact.preferredContact",
@@ -130,11 +133,25 @@ export const useProspectForm = (): {
     try {
       setIsSubmitting(true);
       setLoading(true);
+
+      // Make sure firstName and lastName are not undefined or empty
+      if (!data.contact.name.firstName || !data.contact.name.lastName) {
+        console.error("Name fields are empty or undefined:", data.contact.name);
+        addToast({
+          type: "error",
+          message: "First name and last name are required",
+        });
+        setIsSubmitting(false);
+        setLoading(false);
+        return;
+      }
+
+      // Create a deep copy of the data to ensure we're not affected by any reference issues
       const formattedData: ProspectApiRequest = {
         contact: {
           name: {
-            firstName: data.contact.firstName,
-            lastName: data.contact.lastName,
+            firstName: String(data.contact.name.firstName).trim(),
+            lastName: String(data.contact.name.lastName).trim(),
           },
           email: data.contact.email,
           phone: data.contact.phone,

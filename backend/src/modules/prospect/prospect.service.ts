@@ -3,22 +3,35 @@ import {
   ForbiddenException,
   Injectable,
   InternalServerErrorException,
+  Logger,
   NotFoundException,
 } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import { InjectModel } from '@nestjs/mongoose';
 
 import { Model } from 'mongoose';
 
 import { CreateProspectDto, UpdateProspectDto } from '@/common/dto';
 
+import { EmailService } from '../email/email.service';
 import { Prospect, ProspectDocument } from './schemas/prospect.schema';
 
 @Injectable()
 export class ProspectService {
+  private readonly notificationRecipients: string[];
+  private readonly logger = new Logger(ProspectService.name);
+
   constructor(
     @InjectModel(Prospect.name)
-    private prospectModel: Model<ProspectDocument>
-  ) {}
+    private prospectModel: Model<ProspectDocument>,
+    private readonly emailService: EmailService,
+    private readonly configService: ConfigService
+  ) {
+    // Get notification recipients from config, or use a default list
+    this.notificationRecipients = this.configService.get<string[]>(
+      'prospect.notificationRecipients'
+    ) || ['alex.morrow239@gmail.com']; // Default fallback email
+  }
 
   async create(
     createProspectDto: CreateProspectDto
@@ -33,7 +46,26 @@ export class ProspectService {
       }
 
       const createdProspect = new this.prospectModel(createProspectDto);
-      return await createdProspect.save();
+      const savedProspect = await createdProspect.save();
+
+      try {
+        // Send notification emails about the new prospect application
+        await this.emailService.sendProspectApplicationNotification(
+          savedProspect,
+          this.notificationRecipients
+        );
+        this.logger.log(
+          `Notification sent for new prospect: ${savedProspect.id}`
+        );
+      } catch (emailError) {
+        // Log the error but don't fail the entire operation
+        this.logger.error(
+          `Failed to send prospect notification email: ${emailError.message}`,
+          emailError.stack
+        );
+      }
+
+      return savedProspect;
     } catch (error) {
       if (error instanceof BadRequestException) {
         throw error;

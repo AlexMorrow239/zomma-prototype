@@ -31,3 +31,9 @@ export const serverConfig = registerAs('server', () => ({
 export const jwtConfig = registerAs('jwt', () => ({
   secret: process.env.JWT_SECRET,
 }));
+
+export const emailConfig = registerAs('email', () => ({
+  user: process.env.SMTP_USER,
+  password: process.env.SMTP_PASSWORD,
+  fromAddress: process.env.SMTP_FROM_ADDRESS,
+}));

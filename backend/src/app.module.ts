@@ -6,11 +6,15 @@
 
 import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
+import { APP_FILTER, APP_INTERCEPTOR } from '@nestjs/core';
 import { MongooseModule } from '@nestjs/mongoose';
 
 // Feature modules
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
+import { HttpExceptionFilter } from './common/filters/http-exception.filter';
+import { ErrorHandlingInterceptor } from './common/interceptors/error-handling.interceptor';
+import { LoggingInterceptor } from './common/interceptors/logging.interceptor';
 // Import configurations and validation schema
 import { configValidationSchema } from './config/config.schema';
 import * as config from './config/configuration';
@@ -29,6 +33,7 @@ import { UsersModule } from './modules/user/user.module';
         config.jwtConfig,
         config.environmentConfig,
         config.urlConfig,
+        config.emailConfig,
       ],
       envFilePath: [
         `.env.${process.env.NODE_ENV}.local`,
@@ -57,6 +62,20 @@ import { UsersModule } from './modules/user/user.module';
     ProspectModule,
   ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [
+    AppService,
+    {
+      provide: APP_FILTER,
+      useClass: HttpExceptionFilter,
+    },
+    {
+      provide: APP_INTERCEPTOR,
+      useClass: ErrorHandlingInterceptor,
+    },
+    {
+      provide: APP_INTERCEPTOR,
+      useClass: LoggingInterceptor,
+    },
+  ],
 })
 export class AppModule {}

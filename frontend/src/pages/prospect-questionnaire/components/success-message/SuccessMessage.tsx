@@ -23,7 +23,6 @@ export default function SuccessMessage() {
           <h2>Thank You!</h2>
         </div>
         <div className="card-content">
-          <div className="check-icon">✓</div>
           <p>
             Your questionnaire has been submitted successfully. A ZOMMA
             representative will contact you shortly.

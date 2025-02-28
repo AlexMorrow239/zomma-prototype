@@ -13,6 +13,11 @@ export const configValidationSchema = Joi.object({
   // Admin
   ADMIN_PASSWORD: Joi.string().required(),
 
+  // Email
+  SMTP_USER: Joi.string().email().required(),
+  SMTP_PASSWORD: Joi.string().required(),
+  SMTP_FROM_ADDRESS: Joi.string().email().required(),
+
   // Environment
   NODE_ENV: Joi.string()
     .valid('development', 'production', 'test')
