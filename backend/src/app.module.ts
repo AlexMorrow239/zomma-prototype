@@ -34,6 +34,7 @@ import { UsersModule } from './modules/user/user.module';
         config.environmentConfig,
         config.urlConfig,
         config.emailConfig,
+        config.prospectConfig,
       ],
       envFilePath: [
         `.env.${process.env.NODE_ENV}.local`,

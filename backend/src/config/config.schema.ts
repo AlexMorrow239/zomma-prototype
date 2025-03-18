@@ -31,6 +31,9 @@ export const configValidationSchema = Joi.object({
   FRONTEND_URL_LOCAL: Joi.string().uri().required(),
   FRONTEND_URL_NETWORK: Joi.string().uri().required(),
 
+  // Prospect notification recipients
+  PROSPECT_NOTIFICATION_RECIPIENTS: Joi.string().default(''),
+
   // Production URLs (only required in production)
   FRONTEND_URL: Joi.string().uri().when('NODE_ENV', {
     is: 'production',

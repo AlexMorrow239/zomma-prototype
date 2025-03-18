@@ -37,3 +37,11 @@ export const emailConfig = registerAs('email', () => ({
   password: process.env.SMTP_PASSWORD,
   fromAddress: process.env.SMTP_FROM_ADDRESS,
 }));
+
+export const prospectConfig = registerAs('prospect', () => ({
+  notificationRecipients: process.env.PROSPECT_NOTIFICATION_RECIPIENTS
+    ? process.env.PROSPECT_NOTIFICATION_RECIPIENTS.split(',').map((email) =>
+        email.trim()
+      )
+    : [],
+}));
