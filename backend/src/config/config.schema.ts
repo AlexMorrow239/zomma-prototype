@@ -28,8 +28,8 @@ export const configValidationSchema = Joi.object({
   API_URL: Joi.string().required(),
 
   // Development URLs
-  FRONTEND_URL_LOCAL: Joi.string().uri().required(),
-  FRONTEND_URL_NETWORK: Joi.string().uri().required(),
+  FRONTEND_URL_LOCAL: Joi.string().uri().default('http://localhost:5173'),
+  FRONTEND_URL_NETWORK: Joi.string().uri().default('http://localhost:5173'),
 
   // Prospect notification recipients
   PROSPECT_NOTIFICATION_RECIPIENTS: Joi.string().default(''),
