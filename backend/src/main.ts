@@ -83,8 +83,8 @@ function configureCors(app: any, configService: ConfigService, logger: Logger) {
 
 function setupSwagger(app: any, logger: Logger) {
   const config = new DocumentBuilder()
-    .setTitle('Research Engine API')
-    .setDescription('University of Miami Research Engine API')
+    .setTitle('Zomma Portal API')
+    .setDescription('Prospect intake portal for ZOMMA')
     .setVersion('1.0')
     .addBearerAuth()
     .build();

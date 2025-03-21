@@ -7,10 +7,12 @@
   "license": "UNLICENSED",
   "scripts": {
     "start:prod": "NODE_ENV=production node dist/main",
+    "start:staging": "NODE_ENV=staging node dist/main",
     "start:dev": "NODE_ENV=development nest start --watch",
     "start:dev:network": "NODE_ENV=development NETWORK_MODE=true nest start --watch",
     "start:debug": "nest start --debug --watch",
     "build": "nest build",
+    "build:staging": "NODE_ENV=staging nest build",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
     "test": "jest",
     "test:watch": "jest --watch",

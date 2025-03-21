@@ -25,7 +25,7 @@ export const configValidationSchema = Joi.object({
   NETWORK_MODE: Joi.boolean().default(false),
 
   // API URL
-  API_URL: Joi.string().uri().required(),
+  API_URL: Joi.string().required(),
 
   // Development URLs
   FRONTEND_URL_LOCAL: Joi.string().uri().required(),
