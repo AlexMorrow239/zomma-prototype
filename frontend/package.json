@@ -5,14 +5,10 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "dev:network": "vite --mode network",
     "build": "tsc -b && vite build",
-    "build:network": "tsc -b && vite build --mode network",
-    "build:staging": "tsc -b && vite build --mode staging",
     "lint": "eslint .",
     "preview": "vite preview",
-    "format": "prettier --write .",
-    "serve": "serve -s dist"
+    "format": "prettier --write ."
   },
   "dependencies": {
     "@hookform/resolvers": "^3.10.0",

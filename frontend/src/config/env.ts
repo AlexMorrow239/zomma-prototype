@@ -3,16 +3,6 @@ import { z } from "zod";
 const envSchema = z.object({
   // API Configuration
   VITE_API_URL: z.string().url(),
-
-  // Application Configuration
-  VITE_APP_NAME: z.string().min(1),
-  VITE_APP_DESCRIPTION: z.string().min(1),
-
-  // Feature Flags
-  VITE_ENABLE_DEBUG: z.preprocess(
-    (val) => val === "true" || val === "1",
-    z.boolean()
-  ),
 });
 
 function validateEnv() {
