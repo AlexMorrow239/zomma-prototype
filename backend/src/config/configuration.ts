@@ -20,11 +20,16 @@ export const urlConfig = registerAs('url', () => {
 });
 
 export const databaseConfig = registerAs('database', () => ({
-  uri: process.env.MONGODB_URI,
+  uri: process.env.MONGO_URL,
+  options: {
+    family: 4, // Force IPv4
+    directConnection: true,
+    serverSelectionTimeoutMS: 5000,
+    socketTimeoutMS: 45000,
+  },
 }));
 
 export const serverConfig = registerAs('server', () => ({
-  port: parseInt(process.env.PORT, 10) || 3000,
   nodeEnv: process.env.NODE_ENV,
 }));
 

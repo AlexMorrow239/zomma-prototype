@@ -2,10 +2,7 @@ import * as Joi from 'joi';
 
 export const configValidationSchema = Joi.object({
   // Database
-  MONGODB_URI: Joi.string().required(),
-
-  // Server
-  PORT: Joi.number().default(3000),
+  MONGO_URL: Joi.string().required(),
 
   // JWT
   JWT_SECRET: Joi.string().required(),
@@ -23,9 +20,6 @@ export const configValidationSchema = Joi.object({
     .valid('development', 'production', 'test')
     .default('development'),
   NETWORK_MODE: Joi.boolean().default(false),
-
-  // API URL
-  API_URL: Joi.string().required(),
 
   // Development URLs
   FRONTEND_URL_LOCAL: Joi.string().uri().default('http://localhost:5173'),
