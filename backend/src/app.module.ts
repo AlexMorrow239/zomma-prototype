@@ -15,37 +15,24 @@ import { AppService } from './app.service';
 import { HttpExceptionFilter } from './common/filters/http-exception.filter';
 import { ErrorHandlingInterceptor } from './common/interceptors/error-handling.interceptor';
 import { LoggingInterceptor } from './common/interceptors/logging.interceptor';
-// Import configurations and validation schema
+// Import simplified configuration and validation schema
 import { configValidationSchema } from './config/config.schema';
-import * as config from './config/configuration';
+import configuration from './config/configuration';
 import { AuthModule } from './modules/auth/auth.module';
 import { ProspectModule } from './modules/prospect/prospect.module';
 import { UsersModule } from './modules/user/user.module';
 
 @Module({
   imports: [
-    // Config Module with validation and typed configurations
+    // Config Module with simplified configuration
     ConfigModule.forRoot({
       isGlobal: true,
-      load: [
-        config.databaseConfig,
-        config.serverConfig,
-        config.jwtConfig,
-        config.environmentConfig,
-        config.urlConfig,
-        config.emailConfig,
-        config.prospectConfig,
-      ],
-      envFilePath: [
-        `.env.${process.env.NODE_ENV}.local`,
-        `.env.${process.env.NODE_ENV}`,
-        '.env.local',
-        '.env',
-      ],
+      load: [configuration],
+      envFilePath: ['.env'],
       validationSchema: configValidationSchema,
       validationOptions: {
         allowUnknown: true,
-        abortEarly: true,
+        abortEarly: false,
       },
     }),
 

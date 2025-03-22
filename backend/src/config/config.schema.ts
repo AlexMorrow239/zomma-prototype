@@ -2,18 +2,33 @@ import * as Joi from 'joi';
 
 export const configValidationSchema = Joi.object({
   // Database
-  MONGO_URL: Joi.string().required(),
+  MONGO_URL: Joi.string().default('mongodb://localhost:27017/zomma'),
 
   // JWT
-  JWT_SECRET: Joi.string().required(),
+  JWT_SECRET: Joi.string().default('development-jwt-secret'),
 
   // Admin
-  ADMIN_PASSWORD: Joi.string().required(),
+  ADMIN_PASSWORD: Joi.string().default('admin'),
 
-  // Email
-  SMTP_USER: Joi.string().email().required(),
-  SMTP_PASSWORD: Joi.string().required(),
-  SMTP_FROM_ADDRESS: Joi.string().email().required(),
+  // Server
+  PORT: Joi.number().default(3000),
+
+  // Email (optional in development)
+  SMTP_USER: Joi.string().email().when('NODE_ENV', {
+    is: 'production',
+    then: Joi.required(),
+    otherwise: Joi.optional(),
+  }),
+  SMTP_PASSWORD: Joi.string().when('NODE_ENV', {
+    is: 'production',
+    then: Joi.required(),
+    otherwise: Joi.optional(),
+  }),
+  SMTP_FROM_ADDRESS: Joi.string().email().when('NODE_ENV', {
+    is: 'production',
+    then: Joi.required(),
+    otherwise: Joi.optional(),
+  }),
 
   // Environment
   NODE_ENV: Joi.string()
@@ -21,17 +36,9 @@ export const configValidationSchema = Joi.object({
     .default('development'),
   NETWORK_MODE: Joi.boolean().default(false),
 
-  // Development URLs
-  FRONTEND_URL_LOCAL: Joi.string().uri().default('http://localhost:5173'),
-  FRONTEND_URL_NETWORK: Joi.string().uri().default('http://localhost:5173'),
+  // Frontend URL with defaults
+  FRONTEND_URL: Joi.string().uri().optional(),
 
   // Prospect notification recipients
   PROSPECT_NOTIFICATION_RECIPIENTS: Joi.string().default(''),
-
-  // Production URLs (only required in production)
-  FRONTEND_URL: Joi.string().uri().when('NODE_ENV', {
-    is: 'production',
-    then: Joi.required(),
-    otherwise: Joi.optional(),
-  }),
 });

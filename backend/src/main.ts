@@ -5,9 +5,6 @@ import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 
 import { AppModule } from './app.module';
 
-// Define the port directly in main.ts since it's only used here
-const PORT = 3000;
-
 async function bootstrap() {
   // Create logger instance
   const logger = new Logger('Bootstrap');
@@ -19,69 +16,50 @@ async function bootstrap() {
 
   // Get config service
   const configService = app.get(ConfigService);
+  const port = configService.get('server.port') || 3000;
+  const nodeEnv = configService.get('environment.nodeEnv');
 
   try {
-    // Configure global middleware
-    configureGlobalMiddleware(app, logger);
+    // Configure API prefix and validation
+    app.setGlobalPrefix('api');
+    app.useGlobalPipes(
+      new ValidationPipe({
+        transform: true,
+        whitelist: true,
+        forbidNonWhitelisted: false,
+        transformOptions: { enableImplicitConversion: true },
+      })
+    );
 
-    // Configure CORS
-    configureCors(app, configService, logger);
+    // Configure CORS - simplified for deployment
+    app.enableCors({
+      origin:
+        nodeEnv === 'production' ? configService.get('url.frontend') : '*',
+      methods: 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS',
+      credentials: true,
+    });
 
-    // Configure and setup Swagger documentation
-    setupSwagger(app, logger);
+    // Setup Swagger documentation if not in production
+    if (nodeEnv !== 'production') {
+      const config = new DocumentBuilder()
+        .setTitle('Zomma Portal API')
+        .setDescription('Prospect intake portal for ZOMMA')
+        .setVersion('1.0')
+        .addBearerAuth()
+        .build();
+
+      const document = SwaggerModule.createDocument(app, config);
+      SwaggerModule.setup('api', app, document);
+    }
 
     // Start the server
     const host = '0.0.0.0';
-    await app.listen(PORT, host);
+    await app.listen(port, host);
+    logger.log(`Application running on port ${port} in ${nodeEnv} mode`);
   } catch (error) {
     logger.error('Failed to start application', error.stack);
     process.exit(1);
   }
-}
-
-function configureGlobalMiddleware(app: any, logger: Logger) {
-  app.setGlobalPrefix('api');
-  app.useGlobalPipes(
-    new ValidationPipe({
-      transform: true,
-      whitelist: false,
-      forbidNonWhitelisted: false,
-      transformOptions: {
-        enableImplicitConversion: true,
-        exposeUnsetFields: false,
-      },
-      validateCustomDecorators: true,
-      skipMissingProperties: true,
-      stopAtFirstError: false,
-    })
-  );
-}
-
-function configureCors(app: any, configService: ConfigService, logger: Logger) {
-  const frontendUrl = configService.get('url.frontend');
-  logger.log(`Configuring CORS with frontend URL: ${frontendUrl}`);
-
-  app.enableCors({
-    origin: '*',
-    methods: 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS',
-    allowedHeaders: ['Content-Type', 'Accept', 'Authorization'],
-    exposedHeaders: ['Content-Disposition'],
-    credentials: true,
-    preflightContinue: false,
-    optionsSuccessStatus: 204,
-  });
-}
-
-function setupSwagger(app: any, logger: Logger) {
-  const config = new DocumentBuilder()
-    .setTitle('Zomma Portal API')
-    .setDescription('Prospect intake portal for ZOMMA')
-    .setVersion('1.0')
-    .addBearerAuth()
-    .build();
-
-  const document = SwaggerModule.createDocument(app, config);
-  SwaggerModule.setup('api', app, document);
 }
 
 // Handle unhandled bootstrap errors with logger
