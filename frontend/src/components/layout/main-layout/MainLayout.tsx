@@ -2,7 +2,7 @@ import { ReactElement } from "react";
 
 import { Outlet } from "react-router-dom";
 
-import { Navbar } from "../navbar/Navbar";
+import { Navbar } from "../navBar/NavBar";
 import "./MainLayout.scss";
 
 export const MainLayout = (): ReactElement => {
