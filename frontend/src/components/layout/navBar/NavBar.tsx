@@ -7,7 +7,7 @@ import { navigationItems } from "@/config/navigation";
 
 import "./NavBar.scss";
 
-export const NavBar = (): ReactElement => {
+export const Navbar = (): ReactElement => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   const toggleMobileMenu = (): void => {
@@ -66,5 +66,3 @@ export const NavBar = (): ReactElement => {
     </nav>
   );
 };
-
-export default NavBar;
