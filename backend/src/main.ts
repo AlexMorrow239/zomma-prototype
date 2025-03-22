@@ -21,7 +21,15 @@ async function bootstrap() {
 
   try {
     // Configure API prefix and validation
-    app.setGlobalPrefix('api');
+    app.setGlobalPrefix('api', {
+      exclude: ['/'], // Exclude root path from global prefix for health checks
+    });
+
+    // Add health check endpoint
+    app.getHttpAdapter().get('/', (req, res) => {
+      res.status(200).send({ status: 'ok' });
+    });
+
     app.useGlobalPipes(
       new ValidationPipe({
         transform: true,

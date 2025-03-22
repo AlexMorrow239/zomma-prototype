@@ -36,11 +36,25 @@ import { UsersModule } from './modules/user/user.module';
       },
     }),
 
-    // Database configuration
+    // Database configuration with improved options
     MongooseModule.forRootAsync({
       inject: [ConfigService],
       useFactory: (configService: ConfigService) => ({
         uri: configService.get<string>('database.uri'),
+        ...configService.get('database.options'),
+        // Add additional connection handling for better reliability
+        connectionFactory: (connection) => {
+          connection.on('connected', () => {
+            console.log('MongoDB connection established successfully');
+          });
+          connection.on('disconnected', () => {
+            console.log('MongoDB connection disconnected');
+          });
+          connection.on('error', (error) => {
+            console.error('MongoDB connection error:', error);
+          });
+          return connection;
+        },
       }),
     }),
 
