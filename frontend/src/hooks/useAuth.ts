@@ -1,3 +1,5 @@
+import { useEffect } from "react";
+
 import { useQueryClient } from "@tanstack/react-query";
 
 import { useAuthStore } from "@/stores/authStore";
@@ -31,8 +33,14 @@ export function useAuth() {
   >("/auth/me", {
     enabled: !!token,
     retry: false,
-    queryKey: ["user"],
   });
+
+  // Update query cache with the custom key when user data is fetched
+  useEffect(() => {
+    if (currentUser) {
+      queryClient.setQueryData(["user"], currentUser);
+    }
+  }, [currentUser, queryClient]);
 
   return {
     user: currentUser || user,

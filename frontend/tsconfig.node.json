@@ -24,7 +24,7 @@
       "@public/*": ["public/*"],
       "@components/*": ["src/components/*"],
       "@styles/*": ["src/styles/*"],
-      "@store/*": ["src/store/*"],
+      "@stores/*": ["src/store/*"],
       "@common/*": ["src/common/*"]
     },
 

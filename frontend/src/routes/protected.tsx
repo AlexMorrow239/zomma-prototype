@@ -1,9 +1,9 @@
 import { Navigate, Outlet, useLocation } from "react-router-dom";
 
-import { useAppSelector } from "@/stores";
+import { useAuthStore } from "@/stores/authStore";
 
-export const ProtectedLayout = (): JSX.Element => {
-  const { isAuthenticated } = useAppSelector((state) => state.auth);
+export const ProtectedLayout = () => {
+  const { isAuthenticated } = useAuthStore();
   const location = useLocation();
 
   if (!isAuthenticated) {
