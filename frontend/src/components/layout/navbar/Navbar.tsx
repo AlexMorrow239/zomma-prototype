@@ -5,7 +5,7 @@ import { Link, NavLink } from "react-router-dom";
 import Logo from "@/assets/logo.png";
 import { navigationItems } from "@/config/navigation";
 
-import "./NavBar.scss";
+import "./Navbar.scss";
 
 export const Navbar = (): ReactElement => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
