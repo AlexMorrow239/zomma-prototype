@@ -22,7 +22,7 @@ export class EmailTemplateService {
           margin: 0 auto;
           padding: 20px;
           line-height: 1.6;
-          color: #334155;
+          color: #116dff;
         }
         .header {
           color: #fe5d2f;
