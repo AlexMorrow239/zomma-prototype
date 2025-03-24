@@ -14,12 +14,12 @@ import { useProspectForm } from "./useProspectForm";
 const services = [
   {
     id: "tax",
-    name: "Tax Compliance",
+    name: "Tax Compliance + Tax Advisory",
     description: "Tax preparation and planning services",
   },
   {
     id: "estate",
-    name: "Estate Planning",
+    name: "Sports + Entertainment",
     description: "Comprehensive estate planning solutions",
   },
   {
@@ -29,17 +29,17 @@ const services = [
   },
   {
     id: "audit",
-    name: "Audit Services",
+    name: "Assurance",
     description: "Financial audit and assurance services",
   },
   {
     id: "financial",
-    name: "Financial Planning",
+    name: "Peer Review",
     description: "Personal and business financial planning",
   },
   {
     id: "bookkeeping",
-    name: "Bookkeeping",
+    name: "Accounting Services",
     description: "Regular bookkeeping and accounting services",
   },
 ];
@@ -118,10 +118,7 @@ export default function ProspectQuestionnaire() {
           </div>
         </div>
 
-        <div className="form-content">
-          <h1>ZOMMA Group Prospective Client Questionnaire</h1>
-          {renderCurrentStep()}
-        </div>
+        <div className="form-content">{renderCurrentStep()}</div>
 
         <div className="form-footer">
           <div className="button-group">
