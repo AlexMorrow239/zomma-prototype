@@ -23,11 +23,6 @@ const services = [
     description: "Comprehensive estate planning solutions",
   },
   {
-    id: "business",
-    name: "Business Consulting",
-    description: "Strategic business advice and planning",
-  },
-  {
     id: "audit",
     name: "Assurance",
     description: "Financial audit and assurance services",
