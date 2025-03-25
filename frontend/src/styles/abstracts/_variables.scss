@@ -17,9 +17,9 @@ $color-primary-300: #fe5d2f;
 $color-primary-400: #fc6100;
 $color-primary-500: #f86420;
 $color-primary-600: color.adjust(#f86420, $lightness: -10%);
-$color-accent-400: #116dff;
-$color-accent-500: color.adjust(#116dff, $lightness: -10%);
-$color-accent-600: color.adjust(#116dff, $lightness: -20%);
+$color-accent-400: #ffbd86;
+$color-accent-500: color.adjust(#ffbd86, $lightness: -10%);
+$color-accent-600: color.adjust(#ffbd86, $lightness: -20%);
 
 // Text colors
 $text-color: $color-gray-700;

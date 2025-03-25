@@ -153,7 +153,6 @@ export class EmailRecipientService {
       email: recipient.email,
       name: recipient.name,
       active: !!recipient.active,
-      description: recipient.description,
       createdAt: recipient.createdAt,
       updatedAt: recipient.updatedAt,
     };

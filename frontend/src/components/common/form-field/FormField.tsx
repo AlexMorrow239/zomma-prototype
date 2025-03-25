@@ -26,7 +26,7 @@ interface BaseFormFieldProps<T> {
   disabled?: boolean;
   rows?: number;
   defaultValue?: T;
-  value?: string | number | readonly string[];
+  value?: string | number | readonly string[] | boolean;
   autocomplete?: string;
   onChange?: (
     event: React.ChangeEvent<
@@ -34,6 +34,8 @@ interface BaseFormFieldProps<T> {
     >
   ) => void;
   error?: string;
+  className?: string;
+  showLabel?: boolean;
 }
 
 interface ProspectFormFieldProps extends BaseFormFieldProps<string> {
@@ -72,6 +74,8 @@ export function FormField<T extends Record<string, unknown>>({
   autocomplete,
   onChange,
   error: explicitError,
+  className,
+  showLabel = true,
 }: FormFieldProps<T>): ReactElement {
   const errors = form?.formState?.errors;
 
@@ -97,20 +101,49 @@ export function FormField<T extends Record<string, unknown>>({
 
   const fieldError = getError();
   const errorMessage = explicitError || fieldError?.message;
-  const inputClassName = `form-field__input ${errorMessage ? "form-field__input--error" : ""}`;
+  const inputClassName = `form-field__input ${errorMessage ? "form-field__input--error" : ""} ${className || ""}`;
+
+  // Special handling for checkbox type
+  if (type === "checkbox") {
+    return (
+      <div className="form-field">
+        {showLabel && (
+          <label className="form-field__label">
+            {label}
+            {required && <span className="form-field__required">*</span>}
+          </label>
+        )}
+        <div className="checkbox-wrapper">
+          <input
+            {...registerField}
+            type="checkbox"
+            checked={value as boolean}
+            className={`form-field__checkbox ${className || ""}`}
+            disabled={disabled}
+          />
+        </div>
+        {help && <span className="form-field__help">{help}</span>}
+        {errorMessage && (
+          <span className="form-field__error">{errorMessage}</span>
+        )}
+      </div>
+    );
+  }
 
   return (
     <div className="form-field">
-      <label className="form-field__label">
-        {label}
-        {required && <span className="form-field__required">*</span>}
-      </label>
+      {showLabel && (
+        <label className="form-field__label">
+          {label}
+          {required && <span className="form-field__required">*</span>}
+        </label>
+      )}
       {options ? (
         <select
           {...registerField}
           className={inputClassName}
           disabled={disabled}
-          value={value}
+          value={value as string | number | readonly string[]}
         >
           <option value="">Select {label.toLowerCase()}</option>
           {options.map(({ value, label }) => (

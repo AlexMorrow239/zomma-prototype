@@ -1,0 +1,184 @@
+.email-recipients-container {
+  max-width: var(--container-width-lg);
+  margin: var(--spacing-8) auto;
+  padding: 0 var(--spacing-4);
+
+  .page-header {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--spacing-4);
+    margin-bottom: var(--spacing-6);
+
+    h1 {
+      margin: 0;
+      font-size: var(--font-size-3xl);
+      font-weight: var(--font-weight-semibold);
+      color: var(--color-text-dark);
+    }
+  }
+
+  .search-container {
+    margin-bottom: var(--spacing-6);
+    width: 100%;
+  }
+
+  .loader-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 200px;
+  }
+
+  .error-message {
+    color: var(--color-error);
+    background-color: var(--color-error-light);
+    padding: var(--spacing-3) var(--spacing-4);
+    border-radius: var(--radius-base);
+    margin-bottom: var(--spacing-4);
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-2);
+
+    &.main-error {
+      margin-bottom: var(--spacing-6);
+    }
+  }
+
+  .recipients-table-wrapper {
+    overflow-x: auto;
+    margin-bottom: var(--spacing-8);
+    box-shadow: var(--shadow-base);
+    border-radius: var(--radius-lg);
+    width: 100%;
+    border: 1px solid var(--color-border);
+    display: block;
+  }
+
+  .recipients-table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+    font-size: var(--font-size-sm);
+    table-layout: auto;
+    min-width: 100%;
+
+    th,
+    td {
+      padding: var(--spacing-3) var(--spacing-4);
+      text-align: left;
+      border-bottom: 1px solid var(--color-border);
+      word-wrap: break-word;
+      overflow-wrap: break-word;
+      box-sizing: border-box;
+    }
+
+    .actions-header {
+      text-align: center;
+    }
+
+    tr {
+      width: 100%;
+      display: table-row;
+    }
+
+    th {
+      font-weight: var(--font-weight-semibold);
+      color: var(--color-text);
+      background-color: var(--color-background-alt);
+    }
+
+    /* Set column widths (converted to min-width for better flexibility) */
+    th:nth-child(1),
+    td:nth-child(1) {
+      min-width: 200px; /* Email column */
+      width: 25%; /* Email column */
+    }
+
+    th:nth-child(2),
+    td:nth-child(2) {
+      min-width: 120px; /* Name column */
+      width: 15%; /* Name column */
+    }
+
+    th:nth-child(3),
+    td:nth-child(3) {
+      min-width: 100px; /* Status column */
+      width: 10%; /* Status column */
+    }
+
+    th:nth-child(4),
+    td:nth-child(4) {
+      min-width: 250px; /* Actions column - increased to accommodate buttons */
+      width: 30%; /* Actions column - increased to accommodate buttons */
+    }
+
+    tr:hover td {
+      background-color: rgba(0, 0, 0, 0.02);
+    }
+
+    .empty-state {
+      text-align: center;
+      padding: var(--spacing-8);
+      color: var(--color-text-light);
+    }
+
+    /* Ensure the last row has a border */
+    tr:last-child td {
+      border-bottom: none;
+    }
+  }
+
+  .status-badge {
+    display: inline-block;
+    padding: var(--spacing-1) var(--spacing-3);
+    border-radius: var(--radius-full);
+    font-size: var(--font-size-xs);
+    font-weight: var(--font-weight-medium);
+
+    &.active {
+      background-color: var(--color-success-light);
+      color: var(--color-success);
+    }
+
+    &.inactive {
+      background-color: rgba(97, 97, 97, 0.1);
+      color: var(--color-text-light);
+    }
+  }
+
+  .actions-cell {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-2);
+    width: 100%;
+  }
+
+  .checkbox-wrapper {
+    display: flex;
+    align-items: center;
+
+    .form-field__checkbox {
+      width: 18px;
+      height: 18px;
+      margin: 0;
+    }
+  }
+
+  .recipients-table {
+    th:nth-child(3),
+    td:nth-child(3) {
+      min-width: 90px;
+    }
+
+    th:nth-child(4),
+    td:nth-child(4) {
+      min-width: 140px;
+      width: auto;
+    }
+  }
+
+  .text-danger {
+    color: var(--color-error);
+  }
+}

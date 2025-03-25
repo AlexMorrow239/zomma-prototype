@@ -82,11 +82,13 @@ export function useApiQuery<T>(
   > & {
     axiosConfig?: AxiosRequestConfig;
     useGlobalLoader?: boolean;
+    onError?: (error: Error) => void;
   }
 ) {
   const {
     axiosConfig,
     useGlobalLoader = true,
+    onError,
     ...queryOptions
   } = options || {};
   const setLoading = useLoadingStore((state) => state.setLoading);

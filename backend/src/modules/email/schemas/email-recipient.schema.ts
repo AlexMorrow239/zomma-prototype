@@ -33,13 +33,6 @@ export class EmailRecipient extends BaseSchema {
   })
   active: boolean;
 
-  @Prop({
-    required: false,
-    type: String,
-    maxlength: 255,
-  })
-  description?: string;
-
   // Inherited from BaseSchema:
   // createdAt: Date;
   // updatedAt: Date;
