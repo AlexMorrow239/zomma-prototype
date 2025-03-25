@@ -20,16 +20,16 @@ const services = [
   {
     id: "estate",
     name: "Sports + Entertainment",
-    description: "Comprehensive estate planning solutions",
+    description: "",
   },
   {
     id: "audit",
-    name: "Assurance",
+    name: "Assurance Services",
     description: "Financial audit and assurance services",
   },
   {
     id: "financial",
-    name: "Peer Review",
+    name: "Certified Peer Review",
     description: "Personal and business financial planning",
   },
   {
