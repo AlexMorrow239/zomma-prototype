@@ -4,6 +4,7 @@ import { ConfigService } from '@nestjs/config';
 import * as nodemailer from 'nodemailer';
 
 import { Prospect } from '../prospect/schemas/prospect.schema';
+import { EmailRecipientService } from './email-recipient.service';
 import { EmailTemplateService } from './email-template.service';
 
 @Injectable()
@@ -15,7 +16,8 @@ export class EmailService {
 
   constructor(
     private readonly emailTemplateService: EmailTemplateService,
-    private readonly configService: ConfigService
+    private readonly configService: ConfigService,
+    private readonly emailRecipientService: EmailRecipientService
   ) {
     const smtpConfig = {
       host: 'smtp.gmail.com',
@@ -32,16 +34,16 @@ export class EmailService {
   /**
    * Sends notification emails when a new prospect application is submitted
    * @param prospect The prospect data
-   * @param recipientEmails List of email addresses to notify
    */
-  async sendProspectApplicationNotification(
-    prospect: Prospect,
-    recipientEmails: string[]
-  ): Promise<void> {
+  async sendProspectApplicationNotification(prospect: Prospect): Promise<void> {
     try {
+      // Get recipient emails from database
+      const recipientEmails =
+        await this.emailRecipientService.getActiveRecipientEmails();
+
       if (!recipientEmails || recipientEmails.length === 0) {
         this.logger.warn(
-          'No recipient emails provided for prospect notification'
+          'No recipient emails found in database for prospect notification'
         );
         return;
       }

@@ -6,3 +6,6 @@ export * from './auth/auth-responses.dto';
 
 export * from './user/user-requests.dto';
 export * from './user/user-responses.dto';
+
+export * from './email/email-recipient-requests.dto';
+export * from './email/email-recipient-responses.dto';

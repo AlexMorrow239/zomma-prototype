@@ -18,7 +18,6 @@ import { Prospect, ProspectDocument } from './schemas/prospect.schema';
 
 @Injectable()
 export class ProspectService {
-  private readonly notificationRecipients: string[];
   private readonly logger = new Logger(ProspectService.name);
 
   constructor(
@@ -27,10 +26,8 @@ export class ProspectService {
     private readonly emailService: EmailService,
     private readonly configService: ConfigService
   ) {
-    // Get notification recipients from config, or use a default list
-    this.notificationRecipients = this.configService.get<string[]>(
-      'prospect.notificationRecipients'
-    ) || ['alex.morrow239@gmail.com']; // Default fallback email
+    // No need to get notification recipients from config anymore
+    // They are now stored in the database
   }
 
   async create(
@@ -50,9 +47,9 @@ export class ProspectService {
 
       try {
         // Send notification emails about the new prospect application
+        // No need to pass recipients as they're fetched from the database
         await this.emailService.sendProspectApplicationNotification(
-          savedProspect,
-          this.notificationRecipients
+          savedProspect
         );
         this.logger.log(
           `Notification sent for new prospect: ${savedProspect.id}`
