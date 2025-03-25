@@ -11,6 +11,17 @@
     justify-content: space-between;
     align-items: center;
 
+    .dashboard-header-left {
+      flex: 1;
+    }
+
+    .dashboard-header-right {
+      flex: 1;
+      display: flex;
+      justify-content: flex-end;
+      gap: var(--spacing-2);
+    }
+
     h1 {
       font-size: var(--font-size-2xl);
       font-weight: var(--font-weight-bold);

@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom";
 
 import { useQueryClient } from "@tanstack/react-query";
 
-import { LogOut, Settings, User, X } from "lucide-react";
+import { LogOut, Mail, Settings, User, X } from "lucide-react";
 
 import { Button } from "@/components/common/button/Button";
 import Loader from "@/components/common/loader/Loader";
@@ -146,49 +146,62 @@ export default function Dashboard() {
     <div className="dashboard">
       <Loader isLoading={isLoading} />
       <header className="dashboard-header">
-        <h1>Prospect Details</h1>
-        <div className="user-menu">
+        <div className="dashboard-header-left">
+          <h1>Prospect Details</h1>
+        </div>
+        <div className="dashboard-header-right">
+          <div className="user-menu">
+            <Button
+              variant="outline"
+              size="sm"
+              leftIcon={<User size={18} />}
+              onClick={() => setIsUserMenuOpen(!isUserMenuOpen)}
+            >
+              {profile.name.firstName} {profile.name.lastName}
+            </Button>
+
+            {isUserMenuOpen && (
+              <div className="user-dropdown">
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  leftIcon={<X size={18} />}
+                  fullWidth
+                  onClick={closeMenu}
+                  className="close-button"
+                >
+                  Close
+                </Button>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  leftIcon={<Settings size={18} />}
+                  fullWidth
+                  onClick={() => setIsEditProfileOpen(true)}
+                >
+                  Edit Profile
+                </Button>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  leftIcon={<LogOut size={18} />}
+                  fullWidth
+                  onClick={handleLogout}
+                >
+                  Logout
+                </Button>
+              </div>
+            )}
+          </div>
+
           <Button
             variant="outline"
             size="sm"
-            leftIcon={<User size={18} />}
-            onClick={() => setIsUserMenuOpen(!isUserMenuOpen)}
+            leftIcon={<Mail size={18} />}
+            onClick={() => navigate("/email-recipients")}
           >
-            {profile.name.firstName} {profile.name.lastName}
+            Email Recipients
           </Button>
-
-          {isUserMenuOpen && (
-            <div className="user-dropdown">
-              <Button
-                variant="ghost"
-                size="sm"
-                leftIcon={<X size={18} />}
-                fullWidth
-                onClick={closeMenu}
-                className="close-button"
-              >
-                Close
-              </Button>
-              <Button
-                variant="ghost"
-                size="sm"
-                leftIcon={<Settings size={18} />}
-                fullWidth
-                onClick={() => setIsEditProfileOpen(true)}
-              >
-                Edit Profile
-              </Button>
-              <Button
-                variant="ghost"
-                size="sm"
-                leftIcon={<LogOut size={18} />}
-                fullWidth
-                onClick={handleLogout}
-              >
-                Logout
-              </Button>
-            </div>
-          )}
         </div>
       </header>
 
