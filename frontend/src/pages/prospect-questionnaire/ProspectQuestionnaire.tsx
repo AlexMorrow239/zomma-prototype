@@ -29,8 +29,8 @@ const services = [
   },
   {
     id: "financial",
-    name: "Certified Peer Review",
-    description: "Personal and business financial planning",
+    name: "Peer Review",
+    description: "Certified Peer Review",
   },
   {
     id: "bookkeeping",
