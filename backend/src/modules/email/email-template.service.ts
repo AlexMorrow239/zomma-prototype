@@ -22,7 +22,7 @@ export class EmailTemplateService {
           margin: 0 auto;
           padding: 20px;
           line-height: 1.6;
-          color: #116dff;
+          color: #334155;
         }
         .header {
           color: #fe5d2f;
@@ -130,7 +130,7 @@ Zomma Team`;
               <div class="info-section">
                 <h3 style="color: #fe5d2f; margin-bottom: 15px;">Contact Information</h3>
                 <p><span class="info-label">Name:</span> ${firstName} ${lastName}</p>
-                <p><span class="info-label">Email:</span> <a href="mailto:${prospect.contact.email}" style="color: #7ec265;">${prospect.contact.email}</a></p>
+                <p><span class="info-label">Email:</span> <a href="mailto:${prospect.contact.email}" style="color: #ff9b66;">${prospect.contact.email}</a></p>
                 <p><span class="info-label">Phone:</span> ${prospect.contact.phone}</p>
                 <p><span class="info-label">Preferred Contact:</span> ${prospect.contact.preferredContact}</p>
               </div>
